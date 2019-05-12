@@ -26,7 +26,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/SendOTP"
+              $ref: "#/components/schemas/SendOTPRequest"
       parameters:
         - in: "path"
           name: "settingId"

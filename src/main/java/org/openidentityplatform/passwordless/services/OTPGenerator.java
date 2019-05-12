@@ -15,7 +15,7 @@ public class OTPGenerator {
         SentOTP sentOTP = new SentOTP();
         sentOTP.setOperationId(UUID.randomUUID().toString());
         sentOTP.setExpireTime(System.currentTimeMillis() + otpSetting.getTtl() * 60 * 1000);
-
+        sentOTP.setOTP(OTP);
         return sentOTP;
     }
 }
