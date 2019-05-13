@@ -19,6 +19,8 @@ public class OTPSetting {
 
     private String name;
 
+    private String messageTitle;
+
     private String messageTemplate;
 
     private int otpLength;

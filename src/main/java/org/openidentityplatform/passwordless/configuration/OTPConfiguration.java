@@ -1,12 +1,13 @@
 package org.openidentityplatform.passwordless.configuration;
 
 import org.openidentityplatform.passwordless.repositories.*;
-import org.openidentityplatform.passwordless.services.DummyOTPSender;
-import org.openidentityplatform.passwordless.services.OTPGenerator;
-import org.openidentityplatform.passwordless.services.OTPSender;
+import org.openidentityplatform.passwordless.services.*;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.mail.MailSender;
 
 @Configuration
 @Import(SpringContext.class)
@@ -27,9 +28,20 @@ public class OTPConfiguration {
         return new FileBasedOTPSettingsRepository();
     }
 
-    @Bean(name = "dummyOtpSender")
-    public OTPSender otpSender() {
+    @Bean
+    public OTPSender dummyOtpSender() {
         return new DummyOTPSender();
+    }
+
+    @Bean
+    @ConditionalOnProperty(value = "TWILIO_ACCOUNT_SID")
+    public OTPSender twilioOTPSender() {
+        return new TwilioOTPSender();
+    }
+
+    @Bean
+    public OTPSender emailOTPSender(MailSender mailSender) {
+        return new EmailOTPSender(mailSender);
     }
 
     @Bean

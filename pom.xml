@@ -17,6 +17,7 @@
     <properties>
         <java.version>1.8</java.version>
         <commons-text.version>1.6</commons-text.version>
+        <twilio.version>7.37.4</twilio.version>
     </properties>
 
     <dependencies>
@@ -35,6 +36,18 @@
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-yaml</artifactId>
+        </dependency>
+
+        <!--SMS provider integrations-->
+        <dependency>
+            <groupId>com.twilio.sdk</groupId>
+            <artifactId>twilio</artifactId>
+            <version>${twilio.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
 
         <dependency>

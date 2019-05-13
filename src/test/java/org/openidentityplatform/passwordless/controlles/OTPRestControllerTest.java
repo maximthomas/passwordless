@@ -7,6 +7,7 @@ import org.openidentityplatform.passwordless.configuration.OTPConfiguration;
 import org.openidentityplatform.passwordless.models.SentOTP;
 import org.openidentityplatform.passwordless.repositories.SentOTPRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
@@ -25,14 +26,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
 @WebMvcTest(OTPRestController.class)
-@Import({OTPConfiguration.class})
+@Import({OTPConfiguration.class, MailSenderAutoConfiguration.class})
 public class OTPRestControllerTest {
 
     @Autowired
     private MockMvc mvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @Autowired
     private SentOTPRepository sentOTPRepository;

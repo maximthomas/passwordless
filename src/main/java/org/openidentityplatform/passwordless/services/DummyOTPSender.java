@@ -13,17 +13,7 @@ public class DummyOTPSender implements OTPSender {
 
     @Override
     public void sendOTP(OTPSetting otpSetting, String otp, String destination, Map<String, String> properties) {
-        String messageTemplate = otpSetting.getMessageTemplate();
-
-        Map<String, String> values = new HashMap<>();
-        if(!CollectionUtils.isEmpty(properties)) {
-            values.putAll(properties);
-        }
-        values.put("destination", destination);
-        values.put("otp", otp);
-        StringSubstitutor sub = new StringSubstitutor(values);
-        String message = sub.replace(messageTemplate);
-
+        String message = createMessage(otpSetting, otp, destination, properties);
         log.info("message: {}", message);
 
     }
