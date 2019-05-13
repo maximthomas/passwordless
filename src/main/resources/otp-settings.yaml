@@ -1,0 +1,8 @@
+- id: "sms"
+  name: "TEST SMS OTP Setting"
+  messageTemplate: "Code: ${otp}"
+  otpLength: 5
+  useLetters: false
+  useDigits: true
+  ttlMinutes: 3
+  sender: "dummyOtpSender"

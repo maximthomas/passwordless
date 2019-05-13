@@ -24,7 +24,7 @@ public class OTPConfiguration {
 
     @Bean
     public OTPSettingsRepository otpSettingsRepository() {
-        return new InMemoryOTPSettingsRepository();
+        return new FileBasedOTPSettingsRepository();
     }
 
     @Bean(name = "dummyOtpSender")

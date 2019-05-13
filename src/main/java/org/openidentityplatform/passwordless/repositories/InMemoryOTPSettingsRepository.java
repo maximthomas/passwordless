@@ -15,12 +15,11 @@ public class InMemoryOTPSettingsRepository implements OTPSettingsRepository {
         smsSetting.setId("sms");
         smsSetting.setAccountId(null);
         smsSetting.setMessageTemplate("Code: ${otp}");
-        smsSetting.setTitle("Test");
         smsSetting.setName("SMS sender");
         smsSetting.setOtpLength(6);
         smsSetting.setUseDigits(true);
         smsSetting.setUseLetters(false);
-        smsSetting.setTtl(3);
+        smsSetting.setTtlMinutes(3);
         smsSetting.setSender("dummyOtpSender");
 
         otpSettingMap.put(smsSetting.getId(), smsSetting);
