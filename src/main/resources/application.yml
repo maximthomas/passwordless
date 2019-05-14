@@ -10,3 +10,6 @@ spring:
       auth: true
       starttls.enable: true
       ssl.trust: ${MAIL_SSL_TRUST_HOST:smtp.gmail.com}
+otp:
+  settings:
+    config: ${OTP_SETTING_CONFIG:classpath:otp-settings.yaml}

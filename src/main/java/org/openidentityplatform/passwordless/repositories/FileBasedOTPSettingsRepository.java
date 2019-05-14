@@ -3,6 +3,7 @@ package org.openidentityplatform.passwordless.repositories;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.openidentityplatform.passwordless.models.OTPSetting;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +13,7 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.List;
 
+@Log4j2
 public class FileBasedOTPSettingsRepository implements OTPSettingsRepository {
 
 
@@ -26,7 +28,8 @@ public class FileBasedOTPSettingsRepository implements OTPSettingsRepository {
             ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
             otpSettings = objectMapper.readValue(ResourceUtils.getFile(configPath), new TypeReference<List<OTPSetting>>(){});
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("error occurred : {}", e.toString());
+            throw new RuntimeException(e);
         }
     }
 
