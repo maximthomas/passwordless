@@ -4,5 +4,18 @@ services:
   passwordless-service:
     build:
       context: .
+    environment:
+      OTP_SETTING_CONFIG: file:/otp-sample-settings.yaml # external file mounted as volume
+
+      #twilio env vars
+      TWILIO_MESSAGING_SERVICE_SID: foo
+      TWILIO_ACCOUNT_SID: bar
+      TWILIO_AUTH_TOKEN: auth_token
+
+      #mail env vars
+      MAIL_USERNAME: username@gmail.com
+      MAIL_PASSWORD: password
+    volumes:
+      - ./otp-sample-settings.yaml:/otp-sample-settings.yaml
     ports:
       - "8080:8080"

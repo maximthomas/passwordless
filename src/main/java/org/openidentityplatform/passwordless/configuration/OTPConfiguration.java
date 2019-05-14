@@ -4,9 +4,9 @@ import org.openidentityplatform.passwordless.repositories.*;
 import org.openidentityplatform.passwordless.services.*;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.mail.MailSender;
 
 @Configuration
@@ -24,8 +24,8 @@ public class OTPConfiguration {
     }
 
     @Bean
-    public OTPSettingsRepository otpSettingsRepository() {
-        return new FileBasedOTPSettingsRepository();
+    public OTPSettingsRepository otpSettingsRepository(ResourceLoader resourceLoader) {
+        return new FileBasedOTPSettingsRepository(resourceLoader);
     }
 
     @Bean

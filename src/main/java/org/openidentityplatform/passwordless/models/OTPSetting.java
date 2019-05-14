@@ -4,10 +4,6 @@ import lombok.Data;
 import lombok.ToString;
 import org.openidentityplatform.passwordless.configuration.SpringContext;
 import org.openidentityplatform.passwordless.services.OTPSender;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
-
 
 @Data
 @ToString

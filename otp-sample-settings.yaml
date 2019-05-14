@@ -1,0 +1,29 @@
+- id: "sms"
+  name: "Dummy SMS OTP Setting"
+  messageTitle: "Acme LLC"
+  messageTemplate: "Confirmation code: ${otp}"
+  otpLength: 5
+  useLetters: false
+  useDigits: true
+  ttlMinutes: 3
+  sender: "dummyOTPSender"
+
+- id: "twilioSms"
+  name: "Twilio SMS OTP Setting"
+  messageTitle: "Acme LLC"
+  messageTemplate: "Confirmation code: ${otp}"
+  otpLength: 5
+  useLetters: false
+  useDigits: true
+  ttlMinutes: 3
+  sender: "twilioOTPSender"
+
+- id: "email"
+  name: "TEST Email"
+  messageTitle: "Thank yor for registration"
+  messageTemplate: "Temporary link: http://acme.com?link=${otp}"
+  otpLength: 36
+  useLetters: true
+  useDigits: true
+  ttlMinutes: 180 #three hours
+  sender: "emailOTPSender"
