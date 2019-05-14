@@ -50,8 +50,9 @@ public class OTPRestController {
         if(sentOTP == null) {
             throw new OperationNotFoundException();
         }
-        boolean result = sentOTP.getOTP().equals(verifyOTPRequest.getOtp())
-                || System.getProperty("test.OTP", "").equals(verifyOTPRequest.getOtp());
+
+        boolean result = sentOTP.getExpireTime() > System.currentTimeMillis()
+                && sentOTP.getOTP().equals(verifyOTPRequest.getOtp());
 
         return new VerifyOTPResult(result);
     }

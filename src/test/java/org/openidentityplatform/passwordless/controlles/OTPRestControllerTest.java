@@ -56,6 +56,7 @@ public class OTPRestControllerTest {
         SentOTP sentOTP = new SentOTP();
         sentOTP.setOperationId(operationId);
         sentOTP.setOTP(otp);
+        sentOTP.setExpireTime(System.currentTimeMillis() + 1000);
         sentOTPRepository.save(sentOTP);
 
         String requestBody = "{\"operationId\": \""+operationId+"\", \"otp\" : \""+otp+"\"}";
