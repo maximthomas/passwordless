@@ -29,7 +29,7 @@ public class OTPConfiguration {
     }
 
     @Bean
-    public OTPSender dummyOtpSender() {
+    public OTPSender dummyOTPSender() {
         return new DummyOTPSender();
     }
 
