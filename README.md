@@ -15,7 +15,7 @@ Build and run docker image
 docker-compose up --build 
 ```
 
-Adjust settings
+Adjust settings in [otp-sample-settings.yaml](./otp-sample-settings.yaml)
 ```yaml
 #dummy OTP sender (does noting just logs)
 - id: "sms"
