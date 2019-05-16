@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 public class InMemorySentOTPRepository implements SentOTPRepository {
 
     private Map<String, SentOTP> sentOTPMap = new ConcurrentHashMap<>();
+
     @Override
     public void save(SentOTP sentOTP) {
         sentOTPMap.put(sentOTP.getOperationId(), sentOTP);
