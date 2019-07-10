@@ -1,6 +1,10 @@
 # Passwordless Authentication service
 
-Service, authenticates without providing password or you can use it as 2FA (Second Factor Authentication)
+Helps to  authenticate user without providing password.
+
+This service can be used to confirm user's identity, if it have phone number or email.
+You can also use it as second authentication factor (2FA) alongside with login and password or to confirm critical 
+operations (for example, change password) for already authenticated user
 
 # How it works
 
