@@ -14,20 +14,22 @@
  * limitations under the License.
  */
 
-package org.openidentityplatform.passwordless;
+package org.openidentityplatform.passwordless.otp.models;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
-public class PasswordlessApplicationTests {
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+public class SentOTP {
 
-    @Test
-    public void contextLoads() {
+    private String operationId;
 
-    }
+    private String OTP;
 
+    private long expireTime;
 }

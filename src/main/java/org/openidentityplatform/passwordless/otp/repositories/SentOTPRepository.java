@@ -14,20 +14,11 @@
  * limitations under the License.
  */
 
-package org.openidentityplatform.passwordless;
+package org.openidentityplatform.passwordless.otp.repositories;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.openidentityplatform.passwordless.otp.models.SentOTP;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
-public class PasswordlessApplicationTests {
-
-    @Test
-    public void contextLoads() {
-
-    }
-
+public interface SentOTPRepository {
+    void save(SentOTP sentOTP);
+    SentOTP getById(String operationId);
 }

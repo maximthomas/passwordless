@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package org.openidentityplatform.passwordless;
+package org.openidentityplatform.passwordless.otp.services;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import lombok.extern.log4j.Log4j2;
+import org.openidentityplatform.passwordless.otp.models.OTPSetting;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
-public class PasswordlessApplicationTests {
+import java.util.Map;
 
-    @Test
-    public void contextLoads() {
+@Log4j2
+public class DummyOTPSender implements OTPSender {
+
+    @Override
+    public void sendOTP(OTPSetting otpSetting, String otp, String destination, Map<String, String> properties) {
+        String message = createMessage(otpSetting, otp, destination, properties);
+        log.info("message: {}", message);
 
     }
-
 }
