@@ -1,6 +1,35 @@
 # Passwordless Authentication service
 
-Service, authenticates without providing password
+Service, authenticates without providing password or you can use it as 2FA (Second Factor Authentication)
+
+# How it works
+
+You have site or web service what needs to be protected, or needs additional protection. 
+You set up Passworless service and integrate it with your site.
+A user enters credentials on your site, you get phone or email from the users credentials, and call Passwordless service API.
+Passwordless service sends one time password (OTP) to the users phone or email.
+The user enters this OTP and then you verify it at Passwordless service. 
+If verification was successful, the user can be authenticated.
+
+## Example Use Cases
+
+### Registration
+While registering the user enters his phone number or email among other data. 
+Site calls Passwordless service to comfirm users email or phone number, to be sure that phone or email belongs to the user.
+After user enters valid OTP, user account with confirmed phone or email can be created.
+
+This process shown on the diagram below:
+![Registration diab](diagrams/Registration.png)
+
+### Authentication
+While authentication the user enters his login, site gets users phone number or email from his profile and calls 
+Passwordless service. Passwordless service sends OTP to the users phone or email. Users enters OTP, if OTP is valid, 
+the user can be authenticated.
+
+### Critical Operation Confirmation (Authorization)
+If there'a need to change password, restore password or confirm purchase or payment, site calls Passwordless service
+to be sure that exactly the user performs this critical operation. 
+
 
 # Quick start
 
