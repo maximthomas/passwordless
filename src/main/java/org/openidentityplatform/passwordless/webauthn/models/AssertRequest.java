@@ -14,40 +14,25 @@
  * limitations under the License.
  */
 
-package org.openidentityplatform.passwordless.models;
+package org.openidentityplatform.passwordless.webauthn.models;
 
 import lombok.Data;
-import lombok.ToString;
-import org.openidentityplatform.passwordless.configuration.SpringContext;
-import org.openidentityplatform.passwordless.services.OTPSender;
 
 @Data
-@ToString
-public class OTPSetting {
-
+public class AssertRequest {
     private String id;
+    private String rawId;
 
-    private String accountId;
+    private Response response;
 
-    private String name;
+    private String type;
 
-    private String messageTitle;
-
-    private String messageTemplate;
-
-    private int otpLength;
-
-    private boolean useLetters;
-
-    private boolean useDigits;
-
-    private long ttlMinutes; //OTP time to live
-
-    private String sender;
-
-    public OTPSender getOTPOtpSender() {
-
-        return (OTPSender) SpringContext.getBean(sender);
+    @Data
+    public static class Response {
+        private String authenticatorData;
+        private String clientDataJSON;
+        private String signature;
+        private String userHandle;
     }
 
 }

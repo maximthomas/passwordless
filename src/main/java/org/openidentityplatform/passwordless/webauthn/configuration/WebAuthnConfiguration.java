@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
-package org.openidentityplatform.passwordless.repositories;
+package org.openidentityplatform.passwordless.webauthn.configuration;
 
-public class InMemoryAccountRepository implements AccountRepository {
-    
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class WebAuthnConfiguration {
+
 }

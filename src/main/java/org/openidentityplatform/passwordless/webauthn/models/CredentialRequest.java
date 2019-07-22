@@ -14,7 +14,24 @@
  * limitations under the License.
  */
 
-package org.openidentityplatform.passwordless.repositories;
+package org.openidentityplatform.passwordless.webauthn.models;
 
-public interface AccountRepository {
+import lombok.Data;
+
+@Data
+public class CredentialRequest {
+    private String id;
+    private String rawId;
+
+    private Response response;
+
+    private String type;
+
+    @Data
+    public static class Response {
+        private String attestationObject;
+        private String clientDataJSON;
+    }
 }
+
+

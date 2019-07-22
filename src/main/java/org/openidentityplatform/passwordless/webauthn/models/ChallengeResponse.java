@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package org.openidentityplatform.passwordless.repositories;
+package org.openidentityplatform.passwordless.webauthn.models;
 
-import org.openidentityplatform.passwordless.models.SentOTP;
+import lombok.Data;
 
-public interface SentOTPRepository {
-    void save(SentOTP sentOTP);
-    SentOTP getById(String operationId);
+@Data
+public class ChallengeResponse {
+
 }

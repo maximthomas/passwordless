@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-package org.openidentityplatform.passwordless.repositories;
-
-import org.openidentityplatform.passwordless.models.OTPSetting;
-
-public interface OTPSettingsRepository {
-    OTPSetting getSetting(String settingId);
-}
+var connect = require('connect');
+var serveStatic = require('serve-static');
+connect().use(serveStatic(__dirname)).listen(3000, function(){
+    console.log('Server running on 3000...');
+});

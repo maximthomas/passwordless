@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-package org.openidentityplatform.passwordless.models;
+import * as webauthn from './webauthn'
 
-import lombok.Data;
+console.log(webauthn);
 
-@Data
-public class Account {
 
-    private String id;
+const settings = {
+    host : null,
+};
 
-    private String token;
-
-    private String userName;
-
-    private String password;
-
+function init(initSettings) {
+    settings.host = initSettings.host;
+    console.log('passworless init with settings: ', settings);
+    webauthn.init(settings);
 }
+
+
+export {init, webauthn};

@@ -14,22 +14,13 @@
  * limitations under the License.
  */
 
-package org.openidentityplatform.passwordless.models;
+package org.openidentityplatform.passwordless.webauthn.models;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-@ToString
-public class SentOTP {
-
-    private String operationId;
-
-    private String OTP;
-
-    private long expireTime;
+public class ChallengeRequest {
+    private String userName;
+    private String attestationType;
+    private String authenticatorType;
 }

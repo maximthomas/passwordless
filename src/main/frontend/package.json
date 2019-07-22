@@ -1,0 +1,16 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "js/index.js",
+  "scripts": {
+    "dev": "parcel js/passwordless-sdk.js --target=browser --out-dir ../resources/static/js --global Passwordless",
+    "build": "parcel build js/passwordless-sdk.js --global Passwordless --out-dir ../resources/static/js --global Passwordless",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "parcel-bundler": "^1.12.3",
+    "sass": "^1.22.3"
+  }
+}

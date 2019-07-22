@@ -13,3 +13,9 @@ spring:
 otp:
   settings:
     config: ${OTP_SETTING_CONFIG:classpath:otp-settings.yaml}
+
+webauthn:
+  settings:
+    timeout: 60000
+    rpId: localhost
+    origin: http://localhost:3000
