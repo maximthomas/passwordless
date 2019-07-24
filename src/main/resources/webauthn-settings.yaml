@@ -1,0 +1,3 @@
+timeout: 60000
+rpId: localhost
+origin: http://localhost:3000

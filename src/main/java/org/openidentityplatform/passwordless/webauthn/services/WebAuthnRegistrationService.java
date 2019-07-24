@@ -26,7 +26,9 @@ import com.webauthn4j.data.client.challenge.DefaultChallenge;
 import com.webauthn4j.server.ServerProperty;
 import com.webauthn4j.validator.WebAuthnRegistrationContextValidationResponse;
 import com.webauthn4j.validator.WebAuthnRegistrationContextValidator;
+import org.openidentityplatform.passwordless.configuration.YamlPropertySourceFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Base64Utils;
 
@@ -36,21 +38,22 @@ import java.util.Collections;
 import java.util.List;
 
 @Service
+@PropertySource(value = "${webauthn.settings.config}", factory = YamlPropertySourceFactory.class)
 public class WebAuthnRegistrationService {
 
-    @Value("${webauthn.settings.rpId:localhost}")
+    @Value("${rpId:localhost}")
     private String rpId;
 
-    @Value("${webauthn.settings.timeout:60000}")
+    @Value("${timeout:60000}")
     private long timeout;
 
-    @Value("${webauthn.settings.attestationConveyancePreference:none}")
+    @Value("${attestationConveyancePreference:none}")
     private AttestationConveyancePreference attestationConveyancePreference;
 
-    @Value("${webauthn.settings.authenticatorAttachment:#{null}}")
+    @Value("${authenticatorAttachment:#{null}}")
     private AuthenticatorAttachment authenticatorAttachment;
 
-    @Value("${webauthn.settings.origin}")
+    @Value("${origin}")
     private String originUrl;
 
     public PublicKeyCredentialCreationOptions requestCredentials(String username, HttpServletRequest request) {

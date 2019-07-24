@@ -12,10 +12,8 @@ spring:
       ssl.trust: ${MAIL_SSL_TRUST_HOST:smtp.gmail.com}
 otp:
   settings:
-    config: ${OTP_SETTING_CONFIG:classpath:otp-settings.yaml}
+    config: ${OTP_SETTINGS_CONFIG:classpath:otp-settings.yaml}
 
 webauthn:
   settings:
-    timeout: 60000
-    rpId: localhost
-    origin: http://localhost:3000
+    config: ${WEBAUTHN_SETTINGS_CONFIG:classpath:webauthn-settings.yaml}
