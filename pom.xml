@@ -170,7 +170,7 @@
                         <goals>
                             <goal>npm</goal>
                         </goals>
-                        <phase>prepare-package</phase>
+                        <phase>generate-resources</phase>
                         <configuration>
                             <arguments>run build</arguments>
                         </configuration>
