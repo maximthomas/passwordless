@@ -1,10 +1,21 @@
-# Passwordless Authentication service
+# Passwordless Authentication Service
 
-Helps to  authenticate user without providing password.
+Helps to authenticate users without providing password.
 
-This service can be used to confirm user's identity, if it have phone number or email.
-You can also use it as second authentication factor (2FA) alongside with login and password or to confirm critical 
-operations (for example, change password) for already authenticated user
+This service can be used to authenticate user, using 
+[one time password](https://en.wikipedia.org/wiki/One-time_password) (OTP) authentication or 
+[Web Authentication](https://en.wikipedia.org/wiki/WebAuthn) (WebAuthn) 
+
+One can also use it as second authentication factor (2FA) alongside with login and password or to authorize essential 
+operations (for example, change password, or confirm payment) for the already authenticated user.
+
+# Table of contents
+
+1. [How it works](#how-it-works)
+    1. [Example Use Cases](#example-use-cases)
+        1. [Registration](#registration)
+        1. [Essential Operation Confirmation (Authorization)](#essential-operation-confirmation-authorization)
+1. [Quick Start](#quick-start)
 
 # How it works
 
@@ -30,7 +41,7 @@ While authentication the user enters his login, site gets users phone number or 
 Passwordless service. Passwordless service sends OTP to the users phone or email. Users enters OTP, if OTP is valid, 
 the user can be authenticated.
 
-### Critical Operation Confirmation (Authorization)
+### Essential Operation Confirmation (Authorization)
 If there'a need to change password, restore password or confirm purchase or payment, site calls Passwordless service
 to be sure that exactly the user performs this critical operation. 
 
