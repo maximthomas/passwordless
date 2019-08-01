@@ -2,41 +2,80 @@
 
 Helps to authenticate users without providing password.
 
-This service can be used to authenticate user, using 
-[one time password](https://en.wikipedia.org/wiki/One-time_password) (OTP) authentication or 
-[Web Authentication](https://en.wikipedia.org/wiki/WebAuthn) (WebAuthn) 
-
-One can also use it as second authentication factor (2FA) alongside with login and password or to authorize essential 
-operations (for example, change password, or confirm payment) for the already authenticated user.
-
 # Table of contents
 
-1. [How it works](#how-it-works)
-    1. [Example Use Cases](#example-use-cases)
-        1. [Registration](#registration)
-        1. [Essential Operation Confirmation (Authorization)](#essential-operation-confirmation-authorization)
-1. [Quick Start](#quick-start)
+- [How it works](#how-it-works)
+- [Quick start](#quick-start)
+- [Using One Time Password Authentication](#using-one-time-password-authentication)
+  * [Introduction](#introduction)
+  * [Sample Use Cases](#sample-use-cases)
+    + [Registration Process](#registration-process)
+    + [Authentication Process](#authentication-process)
+    + [Essential Operation Confirmation (Authorization)](#essential-operation-confirmation-authorization)
+  * [Customize Settings](#customize-settings)
+- [Using Web Authentication (WebAuthn)](#using-web-authentication-webauthn)
+  * [Prerequisites](#prerequisites)
+  * [Using Javascript SDK](#using-javascript-sdk)
+    + [Registration](#registration)
+    + [Login](#login)
+
 
 # How it works
+You have site or web service what needs passwordless authentication, or needs second factor authentication. 
+Passworless service is the simpler way to implement it. You just install it and integrate it with your site.
+This service can be used to authenticate user, using 
+[one time password](https://en.wikipedia.org/wiki/One-time_password) (OTP) authentication or 
+[Web Authentication](https://en.wikipedia.org/wiki/WebAuthn) (WebAuthn).
 
-You have site or web service what needs to be protected, or needs additional protection. 
-You set up Passworless service and integrate it with your site.
+
+You just call Passwordless service API and in case of OTP authentication service generates, sends and validates one-time password. In case of WebAuthn, Passwordless service registers or authenticates users public key.
+
+You can also use it as second authentication factor (2FA) alongside with login and password or to authorize essential 
+operations (for example, change password, or confirm payment) for the already authenticated user.
+
+
+# Quick start
+
+There are several ways to run passwordless service:
+
+Run from source code
+```
+$> ./mvnw spring-boot:run
+```
+
+Build and run docker image
+```
+$> ./mvnw install
+$> docker build --tag=passwordless-service:latest .
+$> docker run --name==passwordless-service --publish=8080:8080 passwordless-service:latest
+```
+
+Build and run docker image using docker-compose
+```
+$> ./mvnw install
+$> docker-compose up --build 
+```
+
+# Using One Time Password Authentication
+
+## Introduction
+
 A user enters credentials on your site, you get phone or email from the users credentials, and call Passwordless service API.
-Passwordless service sends one time password (OTP) to the users phone or email.
+Passwordless service generates and sends one time password (OTP) to the users phone or email using desired provider - SMS or Mail server.
 The user enters this OTP and then you verify it at Passwordless service. 
 If verification was successful, the user can be authenticated.
 
-## Example Use Cases
+## Sample Use Cases
 
-### Registration
+### Registration Process
 While registering the user enters his phone number or email among other data. 
 Site calls Passwordless service to comfirm users email or phone number, to be sure that phone or email belongs to the user.
 After user enters valid OTP, user account with confirmed phone or email can be created.
 
 This process shown on the diagram below:
-![Registration diab](diagrams/Registration.png)
+![Registration diab](docs/images/Registration.png)
 
-### Authentication
+### Authentication Process
 While authentication the user enters his login, site gets users phone number or email from his profile and calls 
 Passwordless service. Passwordless service sends OTP to the users phone or email. Users enters OTP, if OTP is valid, 
 the user can be authenticated.
@@ -45,19 +84,7 @@ the user can be authenticated.
 If there'a need to change password, restore password or confirm purchase or payment, site calls Passwordless service
 to be sure that exactly the user performs this critical operation. 
 
-
-# Quick start
-
-Run from sources
-```
-./mvnw spring-boot:run
-```
-
-Build and run docker image
-```
-./mvnw install
-docker-compose up --build 
-```
+## Customize Settings
 
 Adjust settings in [otp-sample-settings.yaml](./otp-sample-settings.yaml)
 ```yaml
@@ -99,13 +126,13 @@ Send OTP to client with SMS setting:
 ```
 curl -X POST -d '{"destination": "+1999999999"}'  -H "Content-Type: application/json" 'http://localhost:8080/otp/v1/sms/send' 
 ```
-where /sms/ - otp settings ID
+where `/sms/` - otp settings ID from `.yaml` settings file
 Sample response:
 ```
 {"operationId":"993e61be-23cf-412d-8273-f02e316e8689"}
 ```
 
-Validate OTP:
+Validate OTP with `operationId`:
 ```
 curl -X POST -d '{"operationId": "993e61be-23cf-412d-8273-f02e316e8689", "otp": "123456"}'  -H "Content-Type: application/json" 'http://localhost:8080/otp/v1/verify'
 ```
@@ -115,3 +142,41 @@ Sample response:
 ```
 
 More details in [swagger.yaml](./swagger.yaml)
+
+
+# Using Web Authentication (WebAuthn)
+
+Passwordless service can be used to provide WebAuthn Registration and Login functions both on server using API and on client using JavaScript SDK.
+
+## Prerequisites
+Setup required origin in `webauthn-sample-settings.yaml` in `origin` setting.
+
+And run Passwordless Service from docker compose
+
+## Using Javascript SDK
+
+Just add to your web application SDK script and initialize SDK:
+```html
+<script src="http://passwordless-service:8080/js/passwordless-sdk.js"></script>
+<script>
+    Passwordless.init({host: 'http://passwordless-service:8080'});
+</script>
+``` 
+Full example is [here](./src/test/sdk)
+
+### Registration
+
+Just call  
+```javascript
+Passwordless.webauthn.startRegistration(login);
+```
+where `login` - your username, and dialog asking you to insert USB Token will appear.
+After successful registration SDK will return credenital Id value.
+
+
+### Login
+If your account already registered via startRegistration function and you want to authenticate, call
+```javascript
+Passwordless.webauthn.startLogin(login);
+```
+

@@ -6,6 +6,7 @@ services:
       context: .
     environment:
       OTP_SETTING_CONFIG: file:/otp-sample-settings.yaml # external file mounted as volume
+      WEBAUTHN_SETTINGS_CONFIG: file:/webauthn-sample-settings.yaml
 
       #twilio env vars
       TWILIO_MESSAGING_SERVICE_SID: foo
@@ -17,5 +18,6 @@ services:
       MAIL_PASSWORD: password
     volumes:
       - ./otp-sample-settings.yaml:/otp-sample-settings.yaml
+      - ./webauthn-sample-settings.yaml:/webauthn-sample-settings.yaml
     ports:
       - "8080:8080"
