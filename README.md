@@ -11,11 +11,12 @@ operations (for example, change password, or confirm payment) for the already au
 
 # Table of contents
 
-1. [How it works](#how-it-works)
-    1. [Example Use Cases](#example-use-cases)
-        1. [Registration](#registration)
-        1. [Essential Operation Confirmation (Authorization)](#essential-operation-confirmation-authorization)
-1. [Quick Start](#quick-start)
+- [How it works](#how-it-works)
+  * [Example Use Cases](#example-use-cases)
+    + [Registration](#registration)
+    + [Authentication](#authentication)
+    + [Essential Operation Confirmation (Authorization)](#essential-operation-confirmation-authorization)
+- [Quick start](#quick-start))
 
 # How it works
 
