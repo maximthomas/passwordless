@@ -16,7 +16,7 @@ operations (for example, change password, or confirm payment) for the already au
     + [Registration](#registration)
     + [Authentication](#authentication)
     + [Essential Operation Confirmation (Authorization)](#essential-operation-confirmation-authorization)
-- [Quick start](#quick-start))
+- [Quick start](#quick-start)
 
 # How it works
 
