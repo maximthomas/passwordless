@@ -162,7 +162,7 @@ Just add to your web application SDK script and initialize SDK:
     Passwordless.init({host: 'http://passwordless-service:8080'});
 </script>
 ``` 
-Full example is [here](./src/test/sdk)
+Full example is [here](./examples/jssdk)
 
 ### Registration
 
