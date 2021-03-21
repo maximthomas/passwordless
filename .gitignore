@@ -32,4 +32,5 @@ HELP.md
 ## Frontend ##
 
 node_modules/
+node/
 .cache
