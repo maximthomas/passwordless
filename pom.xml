@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.4.4</version>
+        <version>2.5.3</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>org.openidentityplatform</groupId>
@@ -32,12 +32,13 @@
     <description>Passwordless Authentication Service</description>
 
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>11</java.version>
         <commons-text.version>1.9</commons-text.version>
-        <twilio.version>8.9.0</twilio.version>
-        <webauthn4j.version>0.14.1.RELEASE</webauthn4j.version>
-        <io.springfox.version>2.9.2</io.springfox.version>
-        <nodejs.version>v14.16.0</nodejs.version>
+        <twilio.version>8.19.1</twilio.version>
+        <webauthn4j.version>0.9.5.RELEASE</webauthn4j.version>
+        <io.springfox.version>3.0.0</io.springfox.version>
+        <nodejs.version>v14.17.1</nodejs.version>
+        <yarn.version>v1.22.10</yarn.version>
     </properties>
 
     <dependencies>
@@ -149,36 +150,34 @@
             <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
-                <version>1.7.6</version>
+                <version>1.12.0</version>
                 <executions>
                     <execution>
-                        <id>install node and npm</id>
+                        <id>install node and yarn</id>
                         <goals>
-                            <goal>install-node-and-npm</goal>
+                            <goal>install-node-and-yarn</goal>
                         </goals>
                     </execution>
                     <execution>
-                        <id>npm install</id>
+                        <id>yarn install</id>
                         <goals>
-                            <goal>npm</goal>
+                            <goal>yarn</goal>
                         </goals>
-                        <configuration>
-                            <arguments>install</arguments>
-                        </configuration>
                     </execution>
                     <execution>
                         <id>build</id>
                         <goals>
-                            <goal>npm</goal>
+                            <goal>yarn</goal>
                         </goals>
                         <phase>generate-resources</phase>
                         <configuration>
-                            <arguments>run build</arguments>
+                            <arguments>build</arguments>
                         </configuration>
                     </execution>
                 </executions>
                 <configuration>
-                    <nodeVersion>v14.16.0</nodeVersion>
+                    <nodeVersion>${nodejs.version}</nodeVersion>
+                    <yarnVersion>${yarn.version}</yarnVersion>
                     <workingDirectory>${basedir}/src/main/frontend</workingDirectory>
                 </configuration>
             </plugin>
