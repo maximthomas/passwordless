@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.openidentityplatform.passwordless.otp.controlles;
+package org.openidentityplatform.passwordless.otp.controllers;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

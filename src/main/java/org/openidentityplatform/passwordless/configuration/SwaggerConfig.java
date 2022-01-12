@@ -33,7 +33,7 @@ public class SwaggerConfig {
     public Docket swagger() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("org.openidentityplatform.passwordless.otp.controlles"))
+                .apis(RequestHandlerSelectors.basePackage("org.openidentityplatform.passwordless.otp.controllers"))
                 .paths(PathSelectors.any())
                 .build();
     }

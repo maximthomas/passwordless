@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.openidentityplatform.passwordless.otp.controlles;
+package org.openidentityplatform.passwordless.otp.controllers;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -56,7 +56,7 @@ public class OTPRestControllerTest {
         String requestBody = "{\"destination\": \"+7999999999\"}";
 
         mvc.perform(post("/otp/v1/{settingId}/send", "sms")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.operationId", notNullValue()));
@@ -77,7 +77,7 @@ public class OTPRestControllerTest {
         String requestBody = "{\"operationId\": \""+operationId+"\", \"otp\" : \""+otp+"\"}";
 
         mvc.perform(post("/otp/v1/verify", "sms")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.verified", is(true)));
