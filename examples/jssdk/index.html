@@ -19,7 +19,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <script src="http://localhost.passwordless.com:8080/js/passwordless-sdk.js"></script>
+<!--    <script src="http://localhost.passwordless.com:8080/js/passwordless-sdk.js"></script>-->
+    <script src="http://localhost:8080/js/passwordless-sdk.js"></script>
 </head>
 <body>
 <label for="login">Login:</label>
@@ -28,7 +29,8 @@
 <button type="button" onclick="doLogin()">Login</button>
 
 <script>
-    Passwordless.init({host: 'http://localhost.passwordless.com:8080'});
+    // Passwordless.init({host: 'http://localhost.passwordless.com:8080'});
+    Passwordless.init({host: 'http://localhost:8080'});
     
     function doRegister() {
         var login = document.getElementById("login").value;

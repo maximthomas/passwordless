@@ -77,10 +77,7 @@ public class WebAuthNController {
 
         String username = (String)request.getSession().getAttribute("username");
 
-        Authenticator authenticator = webAuthnRegistrationService.processCredentials(credentialRequest.getId(), credentialRequest.getType(),
-                credentialRequest.getResponse().getAttestationObject(),
-                credentialRequest.getResponse().getClientDataJSON(),
-                request);
+        Authenticator authenticator = webAuthnRegistrationService.processCredentials(credentialRequest,   request);
 
         userAuthenticatorRepository.save(username, authenticator);
 
@@ -109,13 +106,7 @@ public class WebAuthNController {
 
         Set<Authenticator> authenticators = userAuthenticatorRepository.load(username);
 
-        AuthenticatorData<?> autheticatorData = webAuthnLoginService.processCredentials
-                (request, assertRequest.getId(),
-                assertRequest.getResponse().getAuthenticatorData(),
-                assertRequest.getResponse().getClientDataJSON(),
-                assertRequest.getResponse().getSignature(),
-                assertRequest.getResponse().getUserHandle(), authenticators
-        );
+        AuthenticatorData<?> autheticatorData = webAuthnLoginService.processCredentials(request, assertRequest, authenticators);
 
         return Collections.singletonMap("response", autheticatorData);
     }

@@ -16,16 +16,18 @@
 
 package org.openidentityplatform.passwordless.webauthn.services;
 
+import com.webauthn4j.WebAuthnManager;
 import com.webauthn4j.authenticator.Authenticator;
+import com.webauthn4j.converter.exception.DataConversionException;
 import com.webauthn4j.data.*;
 import com.webauthn4j.data.attestation.authenticator.AuthenticatorData;
 import com.webauthn4j.data.client.Origin;
 import com.webauthn4j.data.client.challenge.Challenge;
 import com.webauthn4j.data.client.challenge.DefaultChallenge;
 import com.webauthn4j.server.ServerProperty;
-import com.webauthn4j.validator.WebAuthnAuthenticationContextValidationResponse;
-import com.webauthn4j.validator.WebAuthnAuthenticationContextValidator;
+import com.webauthn4j.validator.exception.ValidationException;
 import org.openidentityplatform.passwordless.configuration.YamlPropertySourceFactory;
+import org.openidentityplatform.passwordless.webauthn.models.AssertRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
@@ -53,6 +55,11 @@ public class WebAuthnLoginService {
     @Value("${origin}")
     private String originUrl;
 
+    private WebAuthnManager webAuthnManager;
+    public WebAuthnLoginService() {
+        webAuthnManager = WebAuthnManager.createNonStrictWebAuthnManager();
+    }
+
     public PublicKeyCredentialRequestOptions requestCredentials(String username, HttpServletRequest request,
                                                                 Set<Authenticator> authenticators) {
 
@@ -77,14 +84,14 @@ public class WebAuthnLoginService {
         return publicKeyCredentialRequestOptions;
     }
 
-    public AuthenticatorData<?> processCredentials(HttpServletRequest request, String idStr,
-                                                   String authenticatorDataStr, String clientDataJSONStr,
-                                                   String signatureStr, String userHandleStr,
-                                                   Set<Authenticator> authenticators) {
-        byte[] id = Base64Utils.decodeFromUrlSafeString(idStr);
-        byte[] clientDataJSON = Base64Utils.decodeFromUrlSafeString(clientDataJSONStr);
-        byte[] authenticatorData = Base64Utils.decodeFromUrlSafeString(authenticatorDataStr);
-        byte[] signature = Base64Utils.decodeFromUrlSafeString(signatureStr);
+    public AuthenticatorData<?> processCredentials(HttpServletRequest request, AssertRequest assertRequest, Set<Authenticator> authenticators) {
+
+        byte[] id = Base64Utils.decodeFromUrlSafeString(assertRequest.getId());
+
+        byte[] userHandle = Base64Utils.decodeFromUrlSafeString(assertRequest.getResponse().getUserHandle());
+        byte[] clientDataJSON = Base64Utils.decodeFromUrlSafeString(assertRequest.getResponse().getClientDataJSON());
+        byte[] authenticatorData = Base64Utils.decodeFromUrlSafeString(assertRequest.getResponse().getAuthenticatorData());
+        byte[] signature = Base64Utils.decodeFromUrlSafeString(assertRequest.getResponse().getSignature());
 
         Origin origin = new Origin(originUrl);
 
@@ -92,30 +99,47 @@ public class WebAuthnLoginService {
 
         byte[] tokenBindingId = null;
         ServerProperty serverProperty = new ServerProperty(origin, rpId, challenge, tokenBindingId);
+        List<byte[]> allowCredentials = null;
         boolean userVerificationRequired = false;
+        boolean userPresenceRequired = true;
 
-        WebAuthnAuthenticationContext authenticationContext =
-                new WebAuthnAuthenticationContext(
-                        id,
-                        clientDataJSON,
-                        authenticatorData,
-                        signature,
-                        serverProperty,
-                        userVerificationRequired
-                );
+        AuthenticationRequest authenticationRequest = new AuthenticationRequest(
+                id, userHandle, authenticatorData, clientDataJSON, null, signature
+        );
 
         Authenticator authenticator = authenticators.stream().filter(a ->
                 Objects.deepEquals(a.getAttestedCredentialData().getCredentialId(), id))
                 .findFirst().orElse(null);
 
-        Assert.notNull(authenticator, "Authenticator required!");
+        AuthenticationParameters authenticationParameters =
+                new AuthenticationParameters(
+                        serverProperty,
+                        authenticator,
+                        allowCredentials,
+                        userVerificationRequired,
+                        userPresenceRequired
+                );
 
-        WebAuthnAuthenticationContextValidator webAuthnAuthenticationContextValidator
-                = new WebAuthnAuthenticationContextValidator();
+        AuthenticationData authenticationData;
+        try {
+            authenticationData = webAuthnManager.parse(authenticationRequest);
+        } catch (DataConversionException e) {
+            // If you would like to handle WebAuthn data structure parse error, please catch DataConversionException
+            throw e;
+        }
+        try {
+            webAuthnManager.validate(authenticationData, authenticationParameters);
+        } catch (ValidationException e) {
+            // If you would like to handle WebAuthn data validation error, please catch ValidationException
+            throw e;
+        }
+// please update the counter of the authenticator record TODO
+//        updateCounter(
+//                authenticationData.getCredentialId(),
+//                authenticationData.getAuthenticatorData().getSignCount()
+//        );
 
-        WebAuthnAuthenticationContextValidationResponse response =
-                webAuthnAuthenticationContextValidator.validate(authenticationContext, authenticator);
+        return authenticationData.getAuthenticatorData();
 
-        return response.getAuthenticatorData();
     }
 }

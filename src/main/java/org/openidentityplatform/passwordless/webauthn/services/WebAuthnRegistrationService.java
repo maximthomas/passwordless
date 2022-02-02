@@ -16,17 +16,19 @@
 
 package org.openidentityplatform.passwordless.webauthn.services;
 
+import com.webauthn4j.WebAuthnManager;
 import com.webauthn4j.authenticator.Authenticator;
 import com.webauthn4j.authenticator.AuthenticatorImpl;
+import com.webauthn4j.converter.exception.DataConversionException;
 import com.webauthn4j.data.*;
 import com.webauthn4j.data.attestation.statement.COSEAlgorithmIdentifier;
 import com.webauthn4j.data.client.Origin;
 import com.webauthn4j.data.client.challenge.Challenge;
 import com.webauthn4j.data.client.challenge.DefaultChallenge;
 import com.webauthn4j.server.ServerProperty;
-import com.webauthn4j.validator.WebAuthnRegistrationContextValidationResponse;
-import com.webauthn4j.validator.WebAuthnRegistrationContextValidator;
+import com.webauthn4j.validator.exception.ValidationException;
 import org.openidentityplatform.passwordless.configuration.YamlPropertySourceFactory;
+import org.openidentityplatform.passwordless.webauthn.models.CredentialRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
@@ -41,14 +43,39 @@ import java.util.List;
 @PropertySource(value = "${webauthn.settings.config}", factory = YamlPropertySourceFactory.class)
 public class WebAuthnRegistrationService {
 
+    List<PublicKeyCredentialParameters> pubKeyCredParams;
+    WebAuthnManager webAuthnManager;
+    public WebAuthnRegistrationService() {
+
+        webAuthnManager = WebAuthnManager.createNonStrictWebAuthnManager();
+
+        pubKeyCredParams = new ArrayList<>();
+        pubKeyCredParams.add(
+                new PublicKeyCredentialParameters(PublicKeyCredentialType.PUBLIC_KEY, COSEAlgorithmIdentifier.ES256));
+        pubKeyCredParams.add(
+                new PublicKeyCredentialParameters(PublicKeyCredentialType.PUBLIC_KEY, COSEAlgorithmIdentifier.ES384));
+        pubKeyCredParams.add(
+                new PublicKeyCredentialParameters(PublicKeyCredentialType.PUBLIC_KEY, COSEAlgorithmIdentifier.ES512));
+        pubKeyCredParams.add(
+                new PublicKeyCredentialParameters(PublicKeyCredentialType.PUBLIC_KEY, COSEAlgorithmIdentifier.RS256));
+        pubKeyCredParams.add(
+                new PublicKeyCredentialParameters(PublicKeyCredentialType.PUBLIC_KEY, COSEAlgorithmIdentifier.RS384));
+        pubKeyCredParams.add(
+                new PublicKeyCredentialParameters(PublicKeyCredentialType.PUBLIC_KEY, COSEAlgorithmIdentifier.RS512));
+    }
+
     @Value("${rpId:localhost}")
     private String rpId;
 
     @Value("${timeout:60000}")
     private long timeout;
 
-    @Value("${attestationConveyancePreference:none}")
     private AttestationConveyancePreference attestationConveyancePreference;
+
+    @Value("${attestationConveyancePreference:none}")
+    private void setAttestationConveyancePreference(String strVal) {
+        this.attestationConveyancePreference = AttestationConveyancePreference.create(strVal);
+    }
 
     @Value("${authenticatorAttachment:#{null}}")
     private AuthenticatorAttachment authenticatorAttachment;
@@ -65,22 +92,7 @@ public class WebAuthnRegistrationService {
                 username,
                 username);
 
-        List<PublicKeyCredentialParameters> pubKeyCredParams = new ArrayList<>();
-        pubKeyCredParams.add(
-                new PublicKeyCredentialParameters(PublicKeyCredentialType.PUBLIC_KEY, COSEAlgorithmIdentifier.ES256));
-        pubKeyCredParams.add(
-                new PublicKeyCredentialParameters(PublicKeyCredentialType.PUBLIC_KEY, COSEAlgorithmIdentifier.ES384));
-        pubKeyCredParams.add(
-                new PublicKeyCredentialParameters(PublicKeyCredentialType.PUBLIC_KEY, COSEAlgorithmIdentifier.ES512));
-        pubKeyCredParams.add(
-                new PublicKeyCredentialParameters(PublicKeyCredentialType.PUBLIC_KEY, COSEAlgorithmIdentifier.RS256));
-        pubKeyCredParams.add(
-                new PublicKeyCredentialParameters(PublicKeyCredentialType.PUBLIC_KEY, COSEAlgorithmIdentifier.RS384));
-        pubKeyCredParams.add(
-                new PublicKeyCredentialParameters(PublicKeyCredentialType.PUBLIC_KEY, COSEAlgorithmIdentifier.RS512));
-
-
-        UserVerificationRequirement userVerificationRequirement = UserVerificationRequirement.PREFERRED;
+       UserVerificationRequirement userVerificationRequirement = UserVerificationRequirement.PREFERRED;
 
         List<PublicKeyCredentialDescriptor> excludeCredentials = Collections.emptyList();
 
@@ -105,36 +117,48 @@ public class WebAuthnRegistrationService {
         return credentialCreationOptions;
     }
 
-    public Authenticator processCredentials(String id, String type, String attestationObjectStr,
-                                            String clientDataJSONStr, HttpServletRequest request)  {
+    public Authenticator processCredentials(CredentialRequest credentialRequest, HttpServletRequest request)  {
 
         Challenge challenge = new DefaultChallenge(request.getSession().getId().getBytes());
-
         Origin origin = new Origin(originUrl);
+
+        String clientDataJSONStr = credentialRequest.getResponse().getClientDataJSON();
+        String attestationObjectStr = credentialRequest.getResponse().getAttestationObject();
+
 
         byte[] clientDataJSON = Base64Utils.decodeFromUrlSafeString(clientDataJSONStr);
         byte[] attestationObject = Base64Utils.decodeFromUrlSafeString(attestationObjectStr);
         byte[] tokenBindingId = null;
 
         ServerProperty serverProperty = new ServerProperty(origin, rpId, challenge, tokenBindingId);
+
         boolean userVerificationRequired = false;
+        boolean userPresenceRequired = true;
 
-        WebAuthnRegistrationContext registrationContext = new WebAuthnRegistrationContext(
-                clientDataJSON,
-                attestationObject,
-                serverProperty,
-                userVerificationRequired
-        );
-        WebAuthnRegistrationContextValidator webAuthnRegistrationContextValidator =
-                WebAuthnRegistrationContextValidator.createNonStrictRegistrationContextValidator();
+        RegistrationRequest registrationRequest = new RegistrationRequest(attestationObject, clientDataJSON);
+        RegistrationParameters registrationParameters = new RegistrationParameters(serverProperty, this.pubKeyCredParams, userVerificationRequired, userPresenceRequired);
 
-        WebAuthnRegistrationContextValidationResponse response = webAuthnRegistrationContextValidator.validate(registrationContext);
 
+       RegistrationData registrationData;
+        try {
+            registrationData = webAuthnManager.parse(registrationRequest);
+        } catch (DataConversionException e) {
+            // If you would like to handle WebAuthn data structure parse error, please catch DataConversionException
+            throw e;
+        }
+        try {
+            webAuthnManager.validate(registrationData, registrationParameters);
+        } catch (ValidationException e) {
+            // If you would like to handle WebAuthn data validation error, please catch ValidationException
+            throw e;
+        }
+
+        // please persist Authenticator object, which will be used in the authentication process.
         Authenticator authenticator =
                 new AuthenticatorImpl( // You may create your own Authenticator implementation to save friendly authenticator name
-                        response.getAttestationObject().getAuthenticatorData().getAttestedCredentialData(),
-                        response.getAttestationObject().getAttestationStatement(),
-                        response.getAttestationObject().getAuthenticatorData().getSignCount()
+                        registrationData.getAttestationObject().getAuthenticatorData().getAttestedCredentialData(),
+                        registrationData.getAttestationObject().getAttestationStatement(),
+                        registrationData.getAttestationObject().getAuthenticatorData().getSignCount()
                 );
         return authenticator;
     }

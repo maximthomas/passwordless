@@ -35,7 +35,7 @@
         <java.version>11</java.version>
         <commons-text.version>1.9</commons-text.version>
         <twilio.version>8.24.0</twilio.version>
-        <webauthn4j.version>0.9.5.RELEASE</webauthn4j.version>
+        <webauthn4j.version>0.18.2.RELEASE</webauthn4j.version>
         <io.springfox.version>3.0.0</io.springfox.version>
         <nodejs.version>v14.17.1</nodejs.version>
         <yarn.version>v1.22.10</yarn.version>

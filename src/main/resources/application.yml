@@ -1,3 +1,8 @@
+server:
+  servlet:
+    session:
+      cookie:
+        same-site: lax
 spring:
   mail:
     host: ${MAIL_HOST:smtp.gmail.com}
@@ -10,6 +15,7 @@ spring:
       auth: true
       starttls.enable: true
       ssl.trust: ${MAIL_SSL_TRUST_HOST:smtp.gmail.com}
+
 otp:
   settings:
     config: ${OTP_SETTINGS_CONFIG:classpath:otp-settings.yaml}

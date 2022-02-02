@@ -1,3 +1,4 @@
 timeout: 60000
 rpId: localhost
-origin: http://localhost:3000
+#origin: 'http://localhost.passwordless.com:3000'
+origin: 'http://localhost:3000'
