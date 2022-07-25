@@ -27,10 +27,8 @@ import com.webauthn4j.data.client.challenge.Challenge;
 import com.webauthn4j.data.client.challenge.DefaultChallenge;
 import com.webauthn4j.server.ServerProperty;
 import com.webauthn4j.validator.exception.ValidationException;
-import org.openidentityplatform.passwordless.configuration.YamlPropertySourceFactory;
+import org.openidentityplatform.passwordless.webauthn.configuration.WebAuthnConfiguration;
 import org.openidentityplatform.passwordless.webauthn.models.CredentialRequest;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Base64Utils;
 
@@ -40,12 +38,13 @@ import java.util.Collections;
 import java.util.List;
 
 @Service
-@PropertySource(value = "${webauthn.settings.config}", factory = YamlPropertySourceFactory.class)
 public class WebAuthnRegistrationService {
 
     List<PublicKeyCredentialParameters> pubKeyCredParams;
     WebAuthnManager webAuthnManager;
-    public WebAuthnRegistrationService() {
+
+    private final WebAuthnConfiguration webAuthnConfiguration;
+    public WebAuthnRegistrationService(WebAuthnConfiguration webAuthnConfiguration) {
 
         webAuthnManager = WebAuthnManager.createNonStrictWebAuthnManager();
 
@@ -62,31 +61,17 @@ public class WebAuthnRegistrationService {
                 new PublicKeyCredentialParameters(PublicKeyCredentialType.PUBLIC_KEY, COSEAlgorithmIdentifier.RS384));
         pubKeyCredParams.add(
                 new PublicKeyCredentialParameters(PublicKeyCredentialType.PUBLIC_KEY, COSEAlgorithmIdentifier.RS512));
+
+        this.webAuthnConfiguration = webAuthnConfiguration;
     }
 
-    @Value("${rpId:localhost}")
-    private String rpId;
 
-    @Value("${timeout:60000}")
-    private long timeout;
-
-    private AttestationConveyancePreference attestationConveyancePreference;
-
-    @Value("${attestationConveyancePreference:none}")
-    private void setAttestationConveyancePreference(String strVal) {
-        this.attestationConveyancePreference = AttestationConveyancePreference.create(strVal);
-    }
-
-    @Value("${authenticatorAttachment:#{null}}")
-    private AuthenticatorAttachment authenticatorAttachment;
-
-    @Value("${origin}")
-    private String originUrl;
 
     public PublicKeyCredentialCreationOptions requestCredentials(String username, HttpServletRequest request) {
 
         Challenge challenge = new DefaultChallenge(request.getSession().getId().getBytes());
-        PublicKeyCredentialRpEntity rp = new PublicKeyCredentialRpEntity(rpId, rpId);
+        PublicKeyCredentialRpEntity rp =
+                new PublicKeyCredentialRpEntity(webAuthnConfiguration.getRpId(), webAuthnConfiguration.getRpId());
 
         PublicKeyCredentialUserEntity user = new PublicKeyCredentialUserEntity(username.getBytes(),
                 username,
@@ -98,7 +83,7 @@ public class WebAuthnRegistrationService {
 
         AuthenticatorSelectionCriteria authenticatorSelectionCriteria =
                 new AuthenticatorSelectionCriteria(
-                        this.authenticatorAttachment,
+                        webAuthnConfiguration.getAuthenticatorAttachment(),
                         false,
                         userVerificationRequirement);
 
@@ -107,10 +92,10 @@ public class WebAuthnRegistrationService {
                 user,
                 challenge,
                 pubKeyCredParams,
-                timeout,
+                webAuthnConfiguration.getTimeout(),
                 excludeCredentials,
                 authenticatorSelectionCriteria,
-                this.attestationConveyancePreference,
+                webAuthnConfiguration.getAttestationConveyancePreference(),
                 null
         );
 
@@ -120,7 +105,7 @@ public class WebAuthnRegistrationService {
     public Authenticator processCredentials(CredentialRequest credentialRequest, HttpServletRequest request)  {
 
         Challenge challenge = new DefaultChallenge(request.getSession().getId().getBytes());
-        Origin origin = new Origin(originUrl);
+        Origin origin = new Origin(webAuthnConfiguration.getOriginUrl());
 
         String clientDataJSONStr = credentialRequest.getResponse().getClientDataJSON();
         String attestationObjectStr = credentialRequest.getResponse().getAttestationObject();
@@ -130,7 +115,8 @@ public class WebAuthnRegistrationService {
         byte[] attestationObject = Base64Utils.decodeFromUrlSafeString(attestationObjectStr);
         byte[] tokenBindingId = null;
 
-        ServerProperty serverProperty = new ServerProperty(origin, rpId, challenge, tokenBindingId);
+        ServerProperty serverProperty =
+                new ServerProperty(origin, webAuthnConfiguration.getRpId(), challenge, tokenBindingId);
 
         boolean userVerificationRequired = false;
         boolean userPresenceRequired = true;

@@ -17,7 +17,7 @@
 package org.openidentityplatform.passwordless.otp.services;
 
 import org.apache.commons.text.StringSubstitutor;
-import org.openidentityplatform.passwordless.otp.models.OTPSetting;
+import org.openidentityplatform.passwordless.otp.configuration.OTPSetting;
 import org.springframework.util.CollectionUtils;
 
 import java.util.HashMap;

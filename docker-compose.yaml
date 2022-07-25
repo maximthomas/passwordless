@@ -2,12 +2,10 @@ version: '3.2'
 
 services:
   passwordless-service:
+    image: maximthomas/passwordless
     build:
       context: .
     environment:
-      OTP_SETTING_CONFIG: file:/otp-sample-settings.yaml # external file mounted as volume
-      WEBAUTHN_SETTINGS_CONFIG: file:/webauthn-sample-settings.yaml
-
       #twilio env vars
       TWILIO_MESSAGING_SERVICE_SID: foo
       TWILIO_ACCOUNT_SID: bar
@@ -16,8 +14,5 @@ services:
       #mail env vars
       MAIL_USERNAME: username@gmail.com
       MAIL_PASSWORD: password
-    volumes:
-      - ./otp-sample-settings.yaml:/otp-sample-settings.yaml
-      - ./webauthn-sample-settings.yaml:/webauthn-sample-settings.yaml
     ports:
       - "8080:8080"

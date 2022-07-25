@@ -36,7 +36,7 @@
         <commons-text.version>1.9</commons-text.version>
         <twilio.version>8.24.0</twilio.version>
         <webauthn4j.version>0.18.2.RELEASE</webauthn4j.version>
-        <io.springfox.version>3.0.0</io.springfox.version>
+        <springdoc.version>1.6.9</springdoc.version>
         <nodejs.version>v14.17.1</nodejs.version>
         <yarn.version>v1.22.10</yarn.version>
         <guava.version>31.0.1-jre</guava.version>
@@ -46,10 +46,6 @@
          <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -117,15 +113,9 @@
         </dependency>
 
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-            <version>${io.springfox.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
-            <version>${io.springfox.version}</version>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>${springdoc.version}</version>
         </dependency>
 
     </dependencies>

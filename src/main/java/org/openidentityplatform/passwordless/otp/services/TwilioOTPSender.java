@@ -19,7 +19,7 @@ package org.openidentityplatform.passwordless.otp.services;
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
 import lombok.extern.log4j.Log4j2;
-import org.openidentityplatform.passwordless.otp.models.OTPSetting;
+import org.openidentityplatform.passwordless.otp.configuration.OTPSetting;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.PostConstruct;
