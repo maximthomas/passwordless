@@ -21,13 +21,11 @@ import com.webauthn4j.data.PublicKeyCredentialCreationOptions;
 import com.webauthn4j.data.PublicKeyCredentialRequestOptions;
 import com.webauthn4j.data.attestation.authenticator.AuthenticatorData;
 import lombok.extern.slf4j.Slf4j;
-import org.openidentityplatform.passwordless.configuration.YamlPropertySourceFactory;
 import org.openidentityplatform.passwordless.webauthn.models.AssertRequest;
 import org.openidentityplatform.passwordless.webauthn.models.CredentialRequest;
 import org.openidentityplatform.passwordless.webauthn.repositories.UserAuthenticatorRepository;
 import org.openidentityplatform.passwordless.webauthn.services.WebAuthnLoginService;
 import org.openidentityplatform.passwordless.webauthn.services.WebAuthnRegistrationService;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,17 +37,16 @@ import java.util.Set;
 @Slf4j
 @RestController
 @RequestMapping("/webauthn/v1")
-@PropertySource(value = "${webauthn.settings.config}", factory = YamlPropertySourceFactory.class)
-@CrossOrigin(origins = "${origin}",
+@CrossOrigin(origins = "${webauthn.settings.origin}",
         allowCredentials = "true"
         )
 public class WebAuthNController {
 
-    private WebAuthnRegistrationService webAuthnRegistrationService;
+    private final WebAuthnRegistrationService webAuthnRegistrationService;
 
-    private WebAuthnLoginService webAuthnLoginService;
+    private final WebAuthnLoginService webAuthnLoginService;
 
-    private UserAuthenticatorRepository userAuthenticatorRepository;
+    private final UserAuthenticatorRepository userAuthenticatorRepository;
 
     public WebAuthNController(WebAuthnRegistrationService webAuthnRegistrationService,
                               WebAuthnLoginService webAuthnLoginService,

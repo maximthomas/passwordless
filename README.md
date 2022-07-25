@@ -21,14 +21,14 @@ Helps to authenticate users without providing password.
 
 
 # How it works
-You have site or web service what needs passwordless authentication, or needs second factor authentication. 
+So, you have a site or a web service what needs passwordless authentication, or needs second factor authentication. 
 Passworless service is the simpler way to implement it. You just install it and integrate it with your site.
-This service can be used to authenticate user, using 
-[one time password](https://en.wikipedia.org/wiki/One-time_password) (OTP) authentication or 
-[Web Authentication](https://en.wikipedia.org/wiki/WebAuthn) (WebAuthn).
+Passworldess service is used for authentication with an 
+[one time password](https://en.wikipedia.org/wiki/One-time_password) (OTP) or using the 
+[Web Authentication](https://en.wikipedia.org/wiki/WebAuthn) (WebAuthn) protocol.
 
-
-You just call Passwordless service API and in case of OTP authentication service generates, sends and validates one-time password. In case of WebAuthn, Passwordless service registers or authenticates users public key.
+You just call Passwordless API service and in the case of OTP authentication service generates, sends, and validates a one-time password.
+In the case of WebAuthn, the Passwordless service registers or authenticates the user's public key.
 
 You can also use it as second authentication factor (2FA) alongside with login and password or to authorize essential 
 operations (for example, change password, or confirm payment) for the already authenticated user.
@@ -43,11 +43,9 @@ Run from source code
 $> ./mvnw spring-boot:run
 ```
 
-Build and run docker image
+Run as a Docker image
 ```
-$> ./mvnw install
-$> docker build --tag=passwordless-service:latest .
-$> docker run --name==passwordless-service --publish=8080:8080 passwordless-service:latest
+$> docker run --publish=8080:8080  maximthomas/passwordless
 ```
 
 Build and run docker image using docker-compose
@@ -56,7 +54,7 @@ $> ./mvnw install
 $> docker-compose up --build 
 ```
 
-# Using One Time Password Authentication
+# One Time Password Authentication
 
 ## Introduction
 
@@ -86,7 +84,7 @@ to be sure that exactly the user performs this critical operation.
 
 ## Customize Settings
 
-Adjust settings in [otp-sample-settings.yaml](./otp-sample-settings.yaml)
+Adjust settings in [application.yml](./src/main/resources/application.yml) in the `otp/settings` section
 ```yaml
 #dummy OTP sender (does noting just logs)
 - id: "sms"
@@ -140,9 +138,6 @@ Sample response:
 ```
 {"verified":false}
 ```
-
-More details in [swagger.yaml](./swagger.yaml)
-
 
 # Using Web Authentication (WebAuthn)
 

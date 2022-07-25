@@ -19,9 +19,9 @@ package org.openidentityplatform.passwordless.otp.controllers;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.openidentityplatform.passwordless.otp.models.OTPSetting;
+import org.openidentityplatform.passwordless.otp.configuration.OTPSetting;
 import org.openidentityplatform.passwordless.otp.models.SentOTP;
-import org.openidentityplatform.passwordless.otp.repositories.OTPSettingsRepository;
+import org.openidentityplatform.passwordless.otp.configuration.OTPSettingsList;
 import org.openidentityplatform.passwordless.otp.repositories.SentOTPRepository;
 import org.openidentityplatform.passwordless.otp.services.OTPGenerator;
 import org.openidentityplatform.passwordless.otp.services.OTPSender;
@@ -34,17 +34,17 @@ import java.util.Map;
 @RequestMapping("/otp/v1")
 public class OTPRestController {
 
-    private OTPSettingsRepository otpSettingsRepository;
+    private final OTPSettingsList otpSettingsList;
 
-    private SentOTPRepository sentOTPRepository;
+    private final SentOTPRepository sentOTPRepository;
 
-    private OTPGenerator otpGenerator;
+    private final OTPGenerator otpGenerator;
 
 
-    public OTPRestController(OTPSettingsRepository otpSettingsRepository,
+    public OTPRestController(OTPSettingsList otpSettingsList,
                              SentOTPRepository sentOTPRepository,
                              OTPGenerator otpGenerator) {
-        this.otpSettingsRepository = otpSettingsRepository;
+        this.otpSettingsList = otpSettingsList;
         this.sentOTPRepository = sentOTPRepository;
         this.otpGenerator = otpGenerator;
 
@@ -52,9 +52,9 @@ public class OTPRestController {
 
     @PostMapping("/{settingId}/send")
     public SendOTPResult send(@PathVariable("settingId") String settingId, @RequestBody SendOTPRequest sendOTPRequest) {
-        OTPSetting otpSetting = otpSettingsRepository.getSetting(settingId);
+        OTPSetting otpSetting = otpSettingsList.getSetting(settingId);
         SentOTP sentOTP = otpGenerator.generateSentOTP(otpSetting);
-        OTPSender otpSender = otpSetting.getOTPOtpSender();
+        OTPSender otpSender = otpSetting.getOtpSender();
         otpSender.sendOTP(otpSetting, sentOTP.getOTP(), sendOTPRequest.getDestination(), sendOTPRequest.getProperties());
         sentOTPRepository.save(sentOTP);
         return new SendOTPResult(sentOTP.getOperationId());

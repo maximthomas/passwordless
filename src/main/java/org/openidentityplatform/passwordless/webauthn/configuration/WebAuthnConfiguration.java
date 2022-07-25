@@ -16,9 +16,32 @@
 
 package org.openidentityplatform.passwordless.webauthn.configuration;
 
+import com.webauthn4j.data.AttestationConveyancePreference;
+import com.webauthn4j.data.AuthenticatorAttachment;
+import lombok.Getter;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@Getter
 public class WebAuthnConfiguration {
+    @Value("${webauthn.settings.rpId:localhost}")
+    private String rpId;
 
+    @Value("${webauthn.settings.timeout:60000}")
+    private long timeout;
+
+    @Value("${webauthn.settings.origin}")
+    private String originUrl;
+
+    private AttestationConveyancePreference attestationConveyancePreference;
+
+    @Value("${webauthn.settings.attestationConveyancePreference:none}")
+    private void setAttestationConveyancePreference(String strVal) {
+        this.attestationConveyancePreference = AttestationConveyancePreference.create(strVal);
+    }
+
+    @Value("${webauthn.settings.authenticatorAttachment:#{null}}")
+    private AuthenticatorAttachment authenticatorAttachment;
 }

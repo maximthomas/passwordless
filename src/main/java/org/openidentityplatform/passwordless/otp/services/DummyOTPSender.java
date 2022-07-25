@@ -17,7 +17,7 @@
 package org.openidentityplatform.passwordless.otp.services;
 
 import lombok.extern.log4j.Log4j2;
-import org.openidentityplatform.passwordless.otp.models.OTPSetting;
+import org.openidentityplatform.passwordless.otp.configuration.OTPSetting;
 
 import java.util.Map;
 

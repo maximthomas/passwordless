@@ -23,13 +23,11 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.mail.MailSender;
 
 @Configuration
-@Import(SpringContext.class)
+@Import({OTPSettingsList.class, SpringContext.class})
 public class OTPConfiguration {
-
     @Bean
     public AccountRepository accountRepository() {
         return new InMemoryAccountRepository(); //TODO add persistence
@@ -38,11 +36,6 @@ public class OTPConfiguration {
     @Bean
     public SentOTPRepository sentOTPRepository() {
         return new InMemorySentOTPRepository(); //TODO add persistence
-    }
-
-    @Bean
-    public OTPSettingsRepository otpSettingsRepository(ResourceLoader resourceLoader) {
-        return new FileBasedOTPSettingsRepository(resourceLoader);
     }
 
     @Bean

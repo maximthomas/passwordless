@@ -26,12 +26,9 @@ import com.webauthn4j.data.client.challenge.Challenge;
 import com.webauthn4j.data.client.challenge.DefaultChallenge;
 import com.webauthn4j.server.ServerProperty;
 import com.webauthn4j.validator.exception.ValidationException;
-import org.openidentityplatform.passwordless.configuration.YamlPropertySourceFactory;
+import org.openidentityplatform.passwordless.webauthn.configuration.WebAuthnConfiguration;
 import org.openidentityplatform.passwordless.webauthn.models.AssertRequest;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 import org.springframework.util.Base64Utils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -41,23 +38,17 @@ import java.util.Objects;
 import java.util.Set;
 
 @Service
-@PropertySource(value = "${webauthn.settings.config}", factory = YamlPropertySourceFactory.class)
 public class WebAuthnLoginService {
 
-    @Value("${rpId:localhost}")
-    private String rpId;
+    private final UserVerificationRequirement userVerificationRequirement = UserVerificationRequirement.PREFERRED;
 
-    @Value("${timeout:60000}")
-    private long timeout;
+    private final WebAuthnManager webAuthnManager;
 
-    private UserVerificationRequirement userVerificationRequirement = UserVerificationRequirement.PREFERRED;
+    private final WebAuthnConfiguration webAuthnConfiguration;
 
-    @Value("${origin}")
-    private String originUrl;
-
-    private WebAuthnManager webAuthnManager;
-    public WebAuthnLoginService() {
+    public WebAuthnLoginService(WebAuthnConfiguration webAuthnConfiguration) {
         webAuthnManager = WebAuthnManager.createNonStrictWebAuthnManager();
+        this.webAuthnConfiguration = webAuthnConfiguration;
     }
 
     public PublicKeyCredentialRequestOptions requestCredentials(String username, HttpServletRequest request,
@@ -78,7 +69,9 @@ public class WebAuthnLoginService {
         }
 
         PublicKeyCredentialRequestOptions publicKeyCredentialRequestOptions = new PublicKeyCredentialRequestOptions(
-                challenge, timeout, rpId, allowCredentials, userVerificationRequirement, null
+                challenge, webAuthnConfiguration.getTimeout(),
+                webAuthnConfiguration.getRpId(),
+                allowCredentials, userVerificationRequirement, null
         );
 
         return publicKeyCredentialRequestOptions;
@@ -93,12 +86,12 @@ public class WebAuthnLoginService {
         byte[] authenticatorData = Base64Utils.decodeFromUrlSafeString(assertRequest.getResponse().getAuthenticatorData());
         byte[] signature = Base64Utils.decodeFromUrlSafeString(assertRequest.getResponse().getSignature());
 
-        Origin origin = new Origin(originUrl);
+        Origin origin = new Origin(webAuthnConfiguration.getOriginUrl());
 
         Challenge challenge = new DefaultChallenge(request.getSession().getId().getBytes());
 
         byte[] tokenBindingId = null;
-        ServerProperty serverProperty = new ServerProperty(origin, rpId, challenge, tokenBindingId);
+        ServerProperty serverProperty = new ServerProperty(origin, webAuthnConfiguration.getRpId(), challenge, tokenBindingId);
         List<byte[]> allowCredentials = null;
         boolean userVerificationRequired = false;
         boolean userPresenceRequired = true;

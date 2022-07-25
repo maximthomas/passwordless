@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.openidentityplatform.passwordless.otp.models;
+package org.openidentityplatform.passwordless.otp.configuration;
 
 import lombok.Data;
 import lombok.ToString;
@@ -45,8 +45,7 @@ public class OTPSetting {
 
     private String sender;
 
-    public OTPSender getOTPOtpSender() {
-
+    public OTPSender getOtpSender() {
         return (OTPSender) SpringContext.getBean(sender);
     }
 

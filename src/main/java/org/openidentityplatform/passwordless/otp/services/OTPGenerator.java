@@ -17,7 +17,7 @@
 package org.openidentityplatform.passwordless.otp.services;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import org.openidentityplatform.passwordless.otp.models.OTPSetting;
+import org.openidentityplatform.passwordless.otp.configuration.OTPSetting;
 import org.openidentityplatform.passwordless.otp.models.SentOTP;
 import org.springframework.stereotype.Service;
 
