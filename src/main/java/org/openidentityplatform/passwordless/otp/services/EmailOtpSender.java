@@ -21,15 +21,16 @@ import org.openidentityplatform.passwordless.otp.configuration.OTPSetting;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
 @Log4j2
-public class EmailOTPSender implements OTPSender {
+public class EmailOtpSender implements OtpSender {
 
     private final MailSender mailSender;
 
-    public EmailOTPSender(MailSender mailSender) {
+    public EmailOtpSender(MailSender mailSender) {
         this.mailSender = mailSender;
     }
 

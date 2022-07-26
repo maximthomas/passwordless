@@ -14,19 +14,22 @@
  * limitations under the License.
  */
 
-package org.openidentityplatform.passwordless.otp.models;
+package org.openidentityplatform.passwordless.otp.services;
 
-import lombok.Data;
+import lombok.extern.log4j.Log4j2;
+import org.openidentityplatform.passwordless.otp.configuration.OTPSetting;
+import org.springframework.stereotype.Service;
 
-@Data
-public class Account {
+import java.util.Map;
 
-    private String id;
+@Service
+@Log4j2
+public class DummyOtpSender implements OtpSender {
 
-    private String token;
+    @Override
+    public void sendOTP(OTPSetting otpSetting, String otp, String destination, Map<String, String> properties) {
+        String message = createMessage(otpSetting, otp, destination, properties);
+        log.info("message: {}", message);
 
-    private String userName;
-
-    private String password;
-
+    }
 }

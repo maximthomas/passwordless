@@ -16,46 +16,36 @@
 
 package org.openidentityplatform.passwordless.otp.configuration;
 
-import org.openidentityplatform.passwordless.configuration.SpringContext;
-import org.openidentityplatform.passwordless.otp.repositories.*;
-import org.openidentityplatform.passwordless.otp.services.*;
+import org.openidentityplatform.passwordless.otp.services.DummyOtpSender;
+import org.openidentityplatform.passwordless.otp.services.EmailOtpSender;
+import org.openidentityplatform.passwordless.otp.services.OtpGenerator;
+import org.openidentityplatform.passwordless.otp.services.OtpSender;
+import org.openidentityplatform.passwordless.otp.services.TwilioOtpSender;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.mail.MailSender;
 
 @Configuration
-@Import({OTPSettingsList.class, SpringContext.class})
 public class OTPConfiguration {
     @Bean
-    public AccountRepository accountRepository() {
-        return new InMemoryAccountRepository(); //TODO add persistence
-    }
-
-    @Bean
-    public SentOTPRepository sentOTPRepository() {
-        return new InMemorySentOTPRepository(); //TODO add persistence
-    }
-
-    @Bean
-    public OTPSender dummyOTPSender() {
-        return new DummyOTPSender();
+    public OtpSender dummyOTPSender() {
+        return new DummyOtpSender();
     }
 
     @Bean
     @ConditionalOnProperty(value = "TWILIO_ACCOUNT_SID")
-    public OTPSender twilioOTPSender() {
-        return new TwilioOTPSender();
+    public OtpSender twilioOTPSender() {
+        return new TwilioOtpSender();
     }
 
     @Bean
-    public OTPSender emailOTPSender(MailSender mailSender) {
-        return new EmailOTPSender(mailSender);
+    public OtpSender emailOtpSender(MailSender mailSender) {
+        return new EmailOtpSender(mailSender);
     }
 
     @Bean
-    public OTPGenerator otpGenerator() {
-        return new OTPGenerator();
+    public OtpGenerator otpGenerator() {
+        return new OtpGenerator();
     }
 }

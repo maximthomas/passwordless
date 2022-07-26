@@ -16,18 +16,21 @@
 
 package org.openidentityplatform.passwordless.otp.services;
 
-import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.openidentityplatform.passwordless.otp.configuration.OTPSetting;
+import org.openidentityplatform.passwordless.otp.models.SentOtp;
 
-import java.util.Map;
+import java.util.UUID;
 
-@Log4j2
-public class DummyOTPSender implements OTPSender {
+public class OtpGenerator {
 
-    @Override
-    public void sendOTP(OTPSetting otpSetting, String otp, String destination, Map<String, String> properties) {
-        String message = createMessage(otpSetting, otp, destination, properties);
-        log.info("message: {}", message);
-
+    public SentOtp generateSentOTP(OTPSetting otpSetting, String destination) {
+        String otp = RandomStringUtils.random(otpSetting.getOtpLength(), otpSetting.isUseLetters(), otpSetting.isUseDigits());
+        SentOtp sentOTP = new SentOtp();
+        sentOTP.setOperationId(UUID.randomUUID());
+        sentOTP.setExpireTime(System.currentTimeMillis() + otpSetting.getTtlMinutes() * 60 * 1000);
+        sentOTP.setOtp(otp);
+        sentOTP.setDestination(destination);
+        return sentOTP;
     }
 }

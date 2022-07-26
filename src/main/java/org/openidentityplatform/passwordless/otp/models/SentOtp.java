@@ -21,15 +21,25 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.util.UUID;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class SentOTP {
+@Entity
+@Table(name = "sent_otp")
+public class SentOtp {
 
-    private String operationId;
+    @Id
+    private UUID operationId;
 
-    private String OTP;
+    private String otp;
 
     private long expireTime;
+
+    private String destination;
 }

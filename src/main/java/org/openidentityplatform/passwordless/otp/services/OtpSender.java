@@ -18,12 +18,13 @@ package org.openidentityplatform.passwordless.otp.services;
 
 import org.apache.commons.text.StringSubstitutor;
 import org.openidentityplatform.passwordless.otp.configuration.OTPSetting;
+import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public interface OTPSender {
+public interface OtpSender {
     void sendOTP(OTPSetting otpSetting, String otp, String destination, Map<String, String> properties);
 
     default String createMessage(OTPSetting otpSetting, String otp, String destination, Map<String, String> properties) {

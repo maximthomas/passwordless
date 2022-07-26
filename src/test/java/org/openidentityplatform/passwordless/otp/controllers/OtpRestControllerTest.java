@@ -18,13 +18,15 @@ package org.openidentityplatform.passwordless.otp.controllers;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.openidentityplatform.passwordless.otp.configuration.OTPConfiguration;
-import org.openidentityplatform.passwordless.otp.models.SentOTP;
-import org.openidentityplatform.passwordless.otp.repositories.SentOTPRepository;
+import org.mockito.Mockito;
+import org.openidentityplatform.passwordless.otp.models.SendOTPResult;
+import org.openidentityplatform.passwordless.otp.models.VerifyOTPResult;
+import org.openidentityplatform.passwordless.otp.services.OperationNotFoundException;
+import org.openidentityplatform.passwordless.otp.services.OtpService;
+import org.openidentityplatform.passwordless.otp.services.SenderNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -34,25 +36,31 @@ import java.util.UUID;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
 @WebAppConfiguration
-@WebMvcTest(OTPRestController.class)
-@Import({OTPConfiguration.class, MailSenderAutoConfiguration.class})
-public class OTPRestControllerTest {
+@WebMvcTest(OtpRestController.class)
+public class OtpRestControllerTest {
 
     @Autowired
     private MockMvc mvc;
 
-    @Autowired
-    private SentOTPRepository sentOTPRepository;
+    @MockBean
+    private OtpService otpService;
 
 
     @Test
     public void testSend() throws Exception {
+        Mockito.when(otpService.send(anyString(), anyString(), isNull())).thenReturn(
+                new SendOTPResult(UUID.randomUUID().toString())
+        );
+
         String requestBody = "{\"destination\": \"+7999999999\"}";
 
         mvc.perform(post("/otp/v1/{settingId}/send", "sms")
@@ -64,23 +72,53 @@ public class OTPRestControllerTest {
     }
 
     @Test
+    public void testSenderNotFound() throws Exception {
+        Mockito.when(otpService.send(anyString(), anyString(), isNull()))
+                .thenThrow(new SenderNotFoundException());
+
+        String requestBody = "{\"destination\": \"+7999999999\"}";
+
+        mvc.perform(post("/otp/v1/{settingId}/send", "sms")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error", notNullValue()));
+    }
+
+    @Test
     public void testVerify() throws Exception {
 
-        String operationId = UUID.randomUUID().toString();
+        Mockito.when(otpService.verify(anyString(), anyString()))
+                .thenReturn(new VerifyOTPResult(true, "test@test.com"));
+
+        UUID operationId = UUID.randomUUID();
         String otp = "12345";
-        SentOTP sentOTP = new SentOTP();
-        sentOTP.setOperationId(operationId);
-        sentOTP.setOTP(otp);
-        sentOTP.setExpireTime(System.currentTimeMillis() + 1000);
-        sentOTPRepository.save(sentOTP);
 
         String requestBody = "{\"operationId\": \""+operationId+"\", \"otp\" : \""+otp+"\"}";
 
-        mvc.perform(post("/otp/v1/verify", "sms")
+        mvc.perform(post("/otp/v1/verify")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.verified", is(true)));
+    }
+
+    @Test
+    public void testVerifyNotFound() throws Exception {
+
+        Mockito.when(otpService.verify(anyString(), anyString()))
+                .thenThrow(new OperationNotFoundException());
+
+        UUID operationId = UUID.randomUUID();
+        String otp = "12345";
+
+        String requestBody = "{\"operationId\": \""+operationId+"\", \"otp\" : \""+otp+"\"}";
+
+        mvc.perform(post("/otp/v1/verify")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error", notNullValue()));
     }
 
 }
