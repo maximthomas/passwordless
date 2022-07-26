@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.6.2</version>
+        <version>2.7.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>org.openidentityplatform</groupId>
@@ -34,11 +34,11 @@
     <properties>
         <java.version>11</java.version>
         <commons-text.version>1.9</commons-text.version>
-        <twilio.version>8.24.0</twilio.version>
-        <webauthn4j.version>0.18.2.RELEASE</webauthn4j.version>
+        <twilio.version>8.31.0</twilio.version>
+        <webauthn4j.version>0.20.0.RELEASE</webauthn4j.version>
         <springdoc.version>1.6.9</springdoc.version>
-        <nodejs.version>v14.17.1</nodejs.version>
-        <yarn.version>v1.22.10</yarn.version>
+        <nodejs.version>v16.16.0</nodejs.version>
+        <yarn.version>v1.22.19</yarn.version>
         <guava.version>31.0.1-jre</guava.version>
     </properties>
 
@@ -56,18 +56,56 @@
             <artifactId>jackson-dataformat-yaml</artifactId>
         </dependency>
 
-        <!--SMS provider integrations-->
+        <!--OTP provider integrations-->
         <dependency>
             <groupId>com.twilio.sdk</groupId>
             <artifactId>twilio</artifactId>
             <version>${twilio.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
 
+        <!--webauthn-->
+        <dependency>
+            <groupId>com.webauthn4j</groupId>
+            <artifactId>webauthn4j-core</artifactId>
+            <version>${webauthn4j.version}</version>
+        </dependency>
+
+        <!--presistence-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+        </dependency>
+
+        <!--other helper libraries-->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>${commons-text.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>${springdoc.version}</version>
+        </dependency>
+
+        <!--dev tools-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
@@ -78,22 +116,6 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-text</artifactId>
-            <version>${commons-text.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.webauthn4j</groupId>
-            <artifactId>webauthn4j-core</artifactId>
-            <version>${webauthn4j.version}</version>
-        </dependency>
-
 
         <!--test dependencies-->
         <dependency>
@@ -102,22 +124,10 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>de.flapdoodle.embed</groupId>
-            <artifactId>de.flapdoodle.embed.mongo</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
         </dependency>
-
-        <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-ui</artifactId>
-            <version>${springdoc.version}</version>
-        </dependency>
-
     </dependencies>
 
     <dependencyManagement>

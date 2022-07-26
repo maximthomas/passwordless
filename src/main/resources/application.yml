@@ -4,6 +4,7 @@ server:
       cookie:
         same-site: lax
 spring:
+
   mail:
     host: ${MAIL_HOST:smtp.gmail.com}
     port: ${MAIL_PORT:587}
@@ -15,6 +16,18 @@ spring:
       auth: true
       starttls.enable: true
       ssl.trust: ${MAIL_SSL_TRUST_HOST:smtp.gmail.com}
+
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password: password
+    driverClassName: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: none
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
 
 otp:
   settings:

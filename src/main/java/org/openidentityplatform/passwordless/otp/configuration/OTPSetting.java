@@ -18,8 +18,7 @@ package org.openidentityplatform.passwordless.otp.configuration;
 
 import lombok.Data;
 import lombok.ToString;
-import org.openidentityplatform.passwordless.configuration.SpringContext;
-import org.openidentityplatform.passwordless.otp.services.OTPSender;
+import org.openidentityplatform.passwordless.otp.services.OtpSender;
 
 @Data
 @ToString
@@ -44,9 +43,5 @@ public class OTPSetting {
     private long ttlMinutes; //OTP time to live
 
     private String sender;
-
-    public OTPSender getOtpSender() {
-        return (OTPSender) SpringContext.getBean(sender);
-    }
 
 }

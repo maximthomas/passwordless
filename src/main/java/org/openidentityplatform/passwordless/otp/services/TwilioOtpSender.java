@@ -21,12 +21,14 @@ import com.twilio.rest.api.v2010.account.Message;
 import lombok.extern.log4j.Log4j2;
 import org.openidentityplatform.passwordless.otp.configuration.OTPSetting;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.Map;
 
 @Log4j2
-public class TwilioOTPSender implements OTPSender {
+public class TwilioOtpSender implements OtpSender {
 
     @Value("#{environment.TWILIO_MESSAGING_SERVICE_SID}")
     private String MESSAGING_SERVICE_SID;
