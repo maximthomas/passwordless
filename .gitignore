@@ -34,3 +34,4 @@ HELP.md
 node_modules/
 node/
 .cache
+.DS_Store

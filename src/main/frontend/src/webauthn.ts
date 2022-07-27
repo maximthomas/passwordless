@@ -14,18 +14,24 @@
  * limitations under the License.
  */
 
-import { Base64 } from './base64'
+import * as Base64 from './base64'
 
-const settings = {
+
+export interface ISettings {
+    host: string,
+    apiUrl: string,
+}
+
+const settings: ISettings= {
     host: null,
     apiUrl: null,
 };
 
-function bufferDecode(value) {
+function bufferDecode(value: string) {
     return Uint8Array.from(atob(value), c => c.charCodeAt(0));
 }
 
-function bufferEncode(value) {
+function bufferEncode(value: Uint8Array) {
     return Base64.fromByteArray(value)
         .replace(/\+/g, "-")
         .replace(/\//g, "_")
@@ -33,11 +39,11 @@ function bufferEncode(value) {
 }
 
 
-function processError(e) {
+function processError(e: Error) {
     console.log(e.toString());
 }
 
-function startRegistration(login) {
+function startRegistration(login: string) {
     const targetUrl = settings.apiUrl + 'register/challenge/' + login;
     fetch(targetUrl, {
         credentials: 'include'
@@ -106,7 +112,7 @@ function startLogin(login) {
 function processLoginChallenge(challenge) {
 
     challenge.challenge = bufferDecode(challenge.challenge.value);
-    challenge.allowCredentials.forEach(function (allowCredential, i) {
+    challenge.allowCredentials.forEach(allowCredential => {
             allowCredential.id = bufferDecode(allowCredential.id);
         }
     );
