@@ -18,15 +18,9 @@ import * as webauthn from './webauthn'
 
 console.log(webauthn);
 
-
-const settings = {
-    host : null,
-};
-
-function init(initSettings) {
-    settings.host = initSettings.host;
-    console.log('passworless init with settings: ', settings);
-    webauthn.init(settings);
+function init(initSettings: webauthn.ISettings) {
+    console.log('passworless init with settings: ', initSettings);
+    webauthn.init(initSettings);
 }
 
 
