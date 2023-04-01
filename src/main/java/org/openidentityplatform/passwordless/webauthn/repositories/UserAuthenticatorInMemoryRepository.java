@@ -17,31 +17,39 @@
 package org.openidentityplatform.passwordless.webauthn.repositories;
 
 import com.webauthn4j.authenticator.Authenticator;
+import com.webauthn4j.authenticator.AuthenticatorImpl;
+import com.webauthn4j.converter.util.CborConverter;
+import com.webauthn4j.converter.util.ObjectConverter;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-@Repository("userAuthenticatorRepository")
 public class UserAuthenticatorInMemoryRepository implements UserAuthenticatorRepository{
 
     private Map<String, Set<Authenticator>> userAuthenticatorsMap = new HashMap<>();
 
+    private ObjectConverter objectConverter = new ObjectConverter();
+    private CborConverter cborConverter = objectConverter.getCborConverter();
+
+
     @Override
     public void save(String username, Authenticator authenticator) {
+        AuthenticatorEntity ae = AuthenticatorEntity.fromAuthenticator(authenticator);
+        Authenticator auth1 = ae.toAuthenticator();
         if(!userAuthenticatorsMap.containsKey(username)) {
             userAuthenticatorsMap.put(username, new HashSet<>());
         }
-        userAuthenticatorsMap.get(username).add(authenticator);
-
+        userAuthenticatorsMap.get(username).add(auth1);
     }
 
     @Override
     public Set<Authenticator> load(String username) {
         if(!userAuthenticatorsMap.containsKey(username)) {
-            return null;
+            return Collections.emptySet();
         }
         return userAuthenticatorsMap.get(username);
     }

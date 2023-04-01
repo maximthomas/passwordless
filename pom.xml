@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.2</version>
+        <version>3.0.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>org.openidentityplatform</groupId>
@@ -32,21 +32,27 @@
     <description>Passwordless Authentication Service</description>
 
     <properties>
-        <java.version>11</java.version>
-        <commons-text.version>1.9</commons-text.version>
-        <twilio.version>8.31.0</twilio.version>
-        <webauthn4j.version>0.20.0.RELEASE</webauthn4j.version>
+        <java.version>17</java.version>
+        <commons-text.version>1.10.0</commons-text.version>
+        <twilio.version>9.1.2</twilio.version>
+        <webauthn4j.version>0.21.0.RELEASE</webauthn4j.version>
         <springdoc.version>1.6.9</springdoc.version>
         <nodejs.version>v16.16.0</nodejs.version>
         <yarn.version>v1.22.19</yarn.version>
-        <guava.version>31.0.1-jre</guava.version>
+        <guava.version>31.1-jre</guava.version>
+        <hibernate-validator.version>8.0.0.Final</hibernate-validator.version>
     </properties>
 
     <dependencies>
-         <dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
@@ -54,6 +60,11 @@
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-yaml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>${hibernate-validator.version}</version>
         </dependency>
 
         <!--OTP provider integrations-->
@@ -127,6 +138,11 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.webauthn4j</groupId>
+            <artifactId>webauthn4j-test</artifactId>
+            <version>${webauthn4j.version}</version>
         </dependency>
     </dependencies>
 

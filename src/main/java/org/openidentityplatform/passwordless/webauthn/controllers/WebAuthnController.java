@@ -26,13 +26,13 @@ import org.openidentityplatform.passwordless.webauthn.models.CredentialRequest;
 import org.openidentityplatform.passwordless.webauthn.repositories.UserAuthenticatorRepository;
 import org.openidentityplatform.passwordless.webauthn.services.WebAuthnLoginService;
 import org.openidentityplatform.passwordless.webauthn.services.WebAuthnRegistrationService;
-import org.springframework.util.Base64Utils;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import java.util.Base64;
 
 @Slf4j
 @RestController
@@ -40,7 +40,7 @@ import java.util.Set;
 @CrossOrigin(origins = "${webauthn.settings.origin}",
         allowCredentials = "true"
         )
-public class WebAuthNController {
+public class WebAuthnController {
 
     private final WebAuthnRegistrationService webAuthnRegistrationService;
 
@@ -48,7 +48,7 @@ public class WebAuthNController {
 
     private final UserAuthenticatorRepository userAuthenticatorRepository;
 
-    public WebAuthNController(WebAuthnRegistrationService webAuthnRegistrationService,
+    public WebAuthnController(WebAuthnRegistrationService webAuthnRegistrationService,
                               WebAuthnLoginService webAuthnLoginService,
                               UserAuthenticatorRepository userAuthenticatorRepository) {
         this.webAuthnRegistrationService = webAuthnRegistrationService;
@@ -74,11 +74,11 @@ public class WebAuthNController {
 
         String username = (String)request.getSession().getAttribute("username");
 
-        Authenticator authenticator = webAuthnRegistrationService.processCredentials(credentialRequest,   request);
+        Authenticator authenticator = webAuthnRegistrationService.processCredentials(credentialRequest, request);
 
         userAuthenticatorRepository.save(username, authenticator);
 
-        return Collections.singletonMap("credentialId", Base64Utils.encodeToUrlSafeString(authenticator.getAttestedCredentialData().getCredentialId()));
+        return Collections.singletonMap("credentialId", Base64.getUrlEncoder().encodeToString(authenticator.getAttestedCredentialData().getCredentialId()));
     }
 
     @RequestMapping("/login/challenge/{username}")
@@ -103,9 +103,9 @@ public class WebAuthNController {
 
         Set<Authenticator> authenticators = userAuthenticatorRepository.load(username);
 
-        AuthenticatorData<?> autheticatorData = webAuthnLoginService.processCredentials(request, assertRequest, authenticators);
+        AuthenticatorData<?> authenticatorData = webAuthnLoginService.processCredentials(request, assertRequest, authenticators);
 
-        return Collections.singletonMap("response", autheticatorData);
+        return Collections.singletonMap("response", authenticatorData);
     }
 
 }

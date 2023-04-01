@@ -29,10 +29,10 @@ import com.webauthn4j.validator.exception.ValidationException;
 import org.openidentityplatform.passwordless.webauthn.configuration.WebAuthnConfiguration;
 import org.openidentityplatform.passwordless.webauthn.models.AssertRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Base64Utils;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -64,7 +64,6 @@ public class WebAuthnLoginService {
                     authenticator.getAttestedCredentialData().getCredentialId(),
                     authenticator.getTransports()
             );
-
             allowCredentials.add(publicKeyCredentialDescriptor);
         }
 
@@ -79,12 +78,12 @@ public class WebAuthnLoginService {
 
     public AuthenticatorData<?> processCredentials(HttpServletRequest request, AssertRequest assertRequest, Set<Authenticator> authenticators) {
 
-        byte[] id = Base64Utils.decodeFromUrlSafeString(assertRequest.getId());
+        byte[] id = Base64.getUrlDecoder().decode(assertRequest.getId());
 
-        byte[] userHandle = Base64Utils.decodeFromUrlSafeString(assertRequest.getResponse().getUserHandle());
-        byte[] clientDataJSON = Base64Utils.decodeFromUrlSafeString(assertRequest.getResponse().getClientDataJSON());
-        byte[] authenticatorData = Base64Utils.decodeFromUrlSafeString(assertRequest.getResponse().getAuthenticatorData());
-        byte[] signature = Base64Utils.decodeFromUrlSafeString(assertRequest.getResponse().getSignature());
+        byte[] userHandle =  Base64.getUrlDecoder().decode(assertRequest.getResponse().getUserHandle());
+        byte[] clientDataJSON = Base64.getUrlDecoder().decode(assertRequest.getResponse().getClientDataJSON());
+        byte[] authenticatorData =  Base64.getUrlDecoder().decode(assertRequest.getResponse().getAuthenticatorData());
+        byte[] signature =  Base64.getUrlDecoder().decode(assertRequest.getResponse().getSignature());
 
         Origin origin = new Origin(webAuthnConfiguration.getOriginUrl());
 
