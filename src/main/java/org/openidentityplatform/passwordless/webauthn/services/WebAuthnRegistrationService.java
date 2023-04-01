@@ -30,12 +30,12 @@ import com.webauthn4j.validator.exception.ValidationException;
 import org.openidentityplatform.passwordless.webauthn.configuration.WebAuthnConfiguration;
 import org.openidentityplatform.passwordless.webauthn.models.CredentialRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Base64Utils;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Base64;
 
 @Service
 public class WebAuthnRegistrationService {
@@ -111,8 +111,8 @@ public class WebAuthnRegistrationService {
         String attestationObjectStr = credentialRequest.getResponse().getAttestationObject();
 
 
-        byte[] clientDataJSON = Base64Utils.decodeFromUrlSafeString(clientDataJSONStr);
-        byte[] attestationObject = Base64Utils.decodeFromUrlSafeString(attestationObjectStr);
+        byte[] clientDataJSON = Base64.getUrlDecoder().decode(clientDataJSONStr);
+        byte[] attestationObject = Base64.getUrlDecoder().decode(attestationObjectStr);
         byte[] tokenBindingId = null;
 
         ServerProperty serverProperty =

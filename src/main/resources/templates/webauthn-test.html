@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .buttons {
+            margin: 4px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>WebAuthn Test</h1>
+    <input id="username" name="username" value="John" />
+    <br>
+    <div class="buttons">
+        <button id="register" value="register" type="button">Register</button>
+        <button id="login" value="login" type="button">Login</button>
+    </div>
+    <script>
+
+        const apiUrl = "/webauthn/v1"
+
+        function startRegistration(login) {
+            const targetUrl = apiUrl + '/register/challenge/' + login;
+            fetch(targetUrl, {
+                credentials: 'include'
+            })
+                .then((res) => {
+                    res.json().then((challenge) => processRegisterChallenge(challenge)).catch(processError);
+                })
+                .catch(processError);
+        }
+        document.getElementById("register").onclick = () => {
+            const username =  document.getElementById("username").value
+            startRegistration(username)
+        }
+
+        document.getElementById("login").onclick = () => {
+            const username =  document.getElementById("username").value
+            startLogin(username)
+        }
+
+        function processError(error) {
+            console.log(error)
+        }
+
+        function processRegisterChallenge(challenge) {
+            console.log('received message ', challenge);
+            challenge.challenge = bufferDecode(challenge.challenge.value);
+            challenge.user.id = bufferDecode(challenge.user.id);
+            console.log('converted message ', challenge);
+
+            navigator.credentials.create({
+                publicKey: challenge,
+            }).then((credential) => {
+                register(credential);
+            }).catch((e) => {
+                    console.log(e.toString());
+                }
+            );
+        }
+        function register(credential) {
+
+            const attestationObject = new Uint8Array(credential.response.attestationObject);
+            const clientDataJSON = new Uint8Array(credential.response.clientDataJSON);
+            const rawId = new Uint8Array(credential.rawId);
+
+            const postData = {
+                id: credential.id,
+                rawId: bufferEncode(rawId),
+                type: credential.type,
+                response: {
+                    attestationObject: bufferEncode(attestationObject),
+                    clientDataJSON: bufferEncode(clientDataJSON),
+                },
+            };
+            console.log('registering credentials ', postData);
+            const targetUrl = apiUrl + '/register/credential';
+            fetch(targetUrl, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(postData),
+            }).then(res => {
+                console.log(res)
+            }).catch(processError);
+        }
+
+        function startLogin(login) {
+            const targetUrl = apiUrl + '/login/challenge/' + login;
+            fetch(targetUrl, {credentials: 'include'})
+                .then((res) => {
+                    res.json().then((challenge) => processLoginChallenge(challenge)).catch(processError);
+                })
+                .catch(processError);
+        }
+
+        function processLoginChallenge(challenge) {
+
+            challenge.challenge = bufferDecode(challenge.challenge.value);
+            challenge.allowCredentials.forEach(allowCredential => {
+                    allowCredential.id = bufferDecode(allowCredential.id);
+                }
+            );
+            console.log('login challenge', challenge);
+
+            navigator.credentials.get({
+                publicKey: challenge,
+            }).then((assertion) => {
+                assert(assertion);
+            }).catch((e) => {
+                    console.log(e.toString());
+                }
+            )
+        }
+
+        function assert(assertion) {
+
+            console.log('assertion ',assertion);
+
+            const authenticatorData = new Uint8Array(assertion.response.authenticatorData);
+            const clientDataJSON = new Uint8Array(assertion.response.clientDataJSON);
+            const signature = new Uint8Array(assertion.response.signature);
+            const userHandle = new Uint8Array(assertion.response.userHandle);
+            const rawId = new Uint8Array(assertion.rawId);
+
+
+            const postData = {
+                id: assertion.id,
+                rawId: bufferEncode(rawId),
+                type: assertion.type,
+                response: {
+                    authenticatorData: bufferEncode(authenticatorData),
+                    clientDataJSON: bufferEncode(clientDataJSON),
+                    signature: bufferEncode(signature),
+                    userHandle: bufferEncode(userHandle),
+                },
+            };
+
+
+            const targetUrl = apiUrl + '/login/credential';
+
+            fetch(targetUrl, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(postData),
+            }).then(res => {
+                console.log(res)
+            }).catch(processError);
+        }
+
+        function bufferDecode(value) {
+            return Uint8Array.from(atob(value), c => c.charCodeAt(0));
+        }
+
+        function bufferEncode(bytes) {
+            let binary = ''
+            const len = bytes.byteLength;
+            for (let i = 0; i < len; i++) {
+                binary += String.fromCharCode( bytes[ i ] );
+            }
+            return window.btoa( binary ).replace(/\+/g, "-")
+                .replace(/\//g, "_")
+                .replace(/=/g, "")
+        }
+    </script>
+</body>
+</html>

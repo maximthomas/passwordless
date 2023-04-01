@@ -17,17 +17,19 @@
 package org.openidentityplatform.passwordless.webauthn.repositories;
 
 import com.webauthn4j.authenticator.Authenticator;
-import org.springframework.stereotype.Repository;
+import com.webauthn4j.converter.util.CborConverter;
+import com.webauthn4j.converter.util.ObjectConverter;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-@Repository("userAuthenticatorRepository")
 public class UserAuthenticatorInMemoryRepository implements UserAuthenticatorRepository{
 
-    private Map<String, Set<Authenticator>> userAuthenticatorsMap = new HashMap<>();
+    private final Map<String, Set<Authenticator>> userAuthenticatorsMap = new HashMap<>();
+
 
     @Override
     public void save(String username, Authenticator authenticator) {
@@ -35,13 +37,12 @@ public class UserAuthenticatorInMemoryRepository implements UserAuthenticatorRep
             userAuthenticatorsMap.put(username, new HashSet<>());
         }
         userAuthenticatorsMap.get(username).add(authenticator);
-
     }
 
     @Override
     public Set<Authenticator> load(String username) {
         if(!userAuthenticatorsMap.containsKey(username)) {
-            return null;
+            return Collections.emptySet();
         }
         return userAuthenticatorsMap.get(username);
     }
