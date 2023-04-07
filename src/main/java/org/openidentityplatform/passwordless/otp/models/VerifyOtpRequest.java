@@ -1,11 +1,15 @@
 package org.openidentityplatform.passwordless.otp.models;
 
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class VerifyOTPRequest {
-    public String operationId;
+public class VerifyOtpRequest {
+    @NotEmpty
+    public String sessionId;
+
+    @NotEmpty
     public String otp;
 }

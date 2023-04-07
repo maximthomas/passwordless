@@ -16,27 +16,7 @@
 
 package org.openidentityplatform.passwordless.otp.services;
 
-import org.apache.commons.text.StringSubstitutor;
-import org.openidentityplatform.passwordless.otp.configuration.OTPSetting;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
-import java.util.HashMap;
-import java.util.Map;
-
 public interface OtpSender {
-    void sendOTP(OTPSetting otpSetting, String otp, String destination, Map<String, String> properties);
+    void sendOTP(String destination, String messageBody, String messageTitle) throws SendOtpException;
 
-    default String createMessage(OTPSetting otpSetting, String otp, String destination, Map<String, String> properties) {
-        String messageTemplate = otpSetting.getMessageTemplate();
-
-        Map<String, String> values = new HashMap<>();
-        if(!CollectionUtils.isEmpty(properties)) {
-            values.putAll(properties);
-        }
-        values.put("destination", destination);
-        values.put("otp", otp);
-        StringSubstitutor sub = new StringSubstitutor(values);
-        return  sub.replace(messageTemplate);
-    }
 }

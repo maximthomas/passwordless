@@ -1,0 +1,107 @@
+openapi: 3.0.3
+info:
+    title: One Time Password Authentication Service
+    description: |-
+        This is an One Time Password (OTP) sending and validating service
+    license:
+        name: Apache 2.0
+        url: http://www.apache.org/licenses/LICENSE-2.0.html
+    version: 0.0.1
+servers:
+    - url: https://localhost:8080/otp/v1
+paths:
+    /send:
+        post:
+            summary: Generate and send an OTP code
+            description: Generate and send an OTP code
+            operationId: send
+            requestBody:
+                description: Send OTP request
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/SendOTPRequest'
+                required: true
+            responses:
+                '200':
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SendOTPResponse'
+                '400':
+                    description: Invalid send OTP request data
+                '404':
+                    description: OTP type not found
+    /verify:
+        post:
+            summary: Verify received OTP
+            description: Verify received OTP
+            operationId: verify
+
+            requestBody:
+                description: Verify OTP request
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/VerifyOTPRequest'
+                required: true
+            responses:
+                '200':
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/VerifyOTPResponse'
+                '400':
+                    description: Invalid send OTP request data
+                '404':
+                    description: OTP type not found
+
+components:
+    schemas:
+        SendOTPRequest:
+            type: object
+            properties:
+                type:
+                    type: string
+                    enum:
+                        - sms
+                        - email
+                destination:
+                    type: string
+                template:
+                    type: string
+        SendOTPResponse:
+            type: object
+            properties:
+                sessionId:
+                    type: string
+                destination:
+                    type: string
+                resendAllowedAt:
+                    type: integer
+                remainingAttempts:
+                    type: integer
+
+        VerifyOTPRequest:
+            type: object
+            properties:
+                sessionId:
+                    type: string
+                otp:
+                    type: string
+                linkParameter:
+                    type: string
+
+        VerifyOTPResponse:
+            type: object
+            properties:
+                valid:
+                    type: boolean
+                destination:
+                    type: string
+                resendAllowedAt:
+                    type: integer
+                remainingAttempts:
+                    type: integer

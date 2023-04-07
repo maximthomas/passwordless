@@ -20,10 +20,7 @@ import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.log4j.Log4j2;
-import org.openidentityplatform.passwordless.otp.configuration.OTPSetting;
 import org.springframework.beans.factory.annotation.Value;
-
-import java.util.Map;
 
 @Log4j2
 public class TwilioOtpSender implements OtpSender {
@@ -43,8 +40,7 @@ public class TwilioOtpSender implements OtpSender {
     }
 
     @Override
-    public void sendOTP(OTPSetting otpSetting, String otp, String destination, Map<String, String> properties) {
-        String messageBody = createMessage(otpSetting, otp, destination, properties);
+    public void sendOTP(String destination, String messageBody, String messageTitle) {
         Message message = Message.creator(
                 new com.twilio.type.PhoneNumber(destination),
                 MESSAGING_SERVICE_SID,

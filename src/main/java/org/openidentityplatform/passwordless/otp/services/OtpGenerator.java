@@ -17,18 +17,18 @@
 package org.openidentityplatform.passwordless.otp.services;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import org.openidentityplatform.passwordless.otp.configuration.OTPSetting;
+import org.openidentityplatform.passwordless.otp.configuration.OtpSettings;
 import org.openidentityplatform.passwordless.otp.models.SentOtp;
 
 import java.util.UUID;
 
 public class OtpGenerator {
 
-    public SentOtp generateSentOTP(OTPSetting otpSetting, String destination) {
-        String otp = RandomStringUtils.random(otpSetting.getOtpLength(), otpSetting.isUseLetters(), otpSetting.isUseDigits());
+    public SentOtp generateSentOTP(OtpSettings otpSettings, String destination) {
+        String otp = RandomStringUtils.random(otpSettings.getOtpLength(), otpSettings.isUseLetters(), otpSettings.isUseDigits());
         SentOtp sentOTP = new SentOtp();
-        sentOTP.setOperationId(UUID.randomUUID());
-        sentOTP.setExpireTime(System.currentTimeMillis() + otpSetting.getTtlMinutes() * 60 * 1000);
+        sentOTP.setSessionId(UUID.randomUUID());
+        sentOTP.setExpireTime(System.currentTimeMillis() + otpSettings.getTtlMinutes() * 60 * 1000);
         sentOTP.setOtp(otp);
         sentOTP.setDestination(destination);
         return sentOTP;
