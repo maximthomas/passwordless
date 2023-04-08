@@ -81,7 +81,15 @@ public class OtpService {
     }
 
     public VerifyOtpResult verify(String sessionId, String otp) throws NotFoundException, OtpVerifyAttemptsExceeded {
-        Optional<SentOtp> sentOtpOptional = sentOtpRepository.findById(UUID.fromString(sessionId));
+        final UUID sessionUUID;
+        try {
+            sessionUUID = UUID.fromString(sessionId);
+        } catch (IllegalArgumentException e) {
+            log.warn("session {} not found", sessionId);
+            throw new SessionNotFoundException();
+        }
+
+        Optional<SentOtp> sentOtpOptional = sentOtpRepository.findById(sessionUUID);
         if(sentOtpOptional.isEmpty()) {
             log.warn("session {} not found", sessionId);
             throw new SessionNotFoundException();
