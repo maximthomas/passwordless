@@ -31,6 +31,7 @@ public class OtpGenerator {
         sentOTP.setExpireTime(System.currentTimeMillis() + otpSettings.getTtlMinutes() * 60 * 1000);
         sentOTP.setOtp(otp);
         sentOTP.setDestination(destination);
+        sentOTP.setLastSentAt(System.currentTimeMillis());
         return sentOTP;
     }
 }

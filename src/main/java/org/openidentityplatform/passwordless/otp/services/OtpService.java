@@ -13,10 +13,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -84,7 +81,7 @@ public class OtpService {
     }
 
     public VerifyOtpResult verify(String sessionId, String otp) throws NotFoundException, OtpVerifyAttemptsExceeded {
-        Optional<SentOtp> sentOtpOptional = sentOtpRepository.findById(sessionId);
+        Optional<SentOtp> sentOtpOptional = sentOtpRepository.findById(UUID.fromString(sessionId));
         if(sentOtpOptional.isEmpty()) {
             log.warn("session {} not found", sessionId);
             throw new SessionNotFoundException();

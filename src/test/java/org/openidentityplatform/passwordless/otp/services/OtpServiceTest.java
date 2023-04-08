@@ -70,7 +70,7 @@ class OtpServiceTest {
         when(otpGenerator.generateSentOTP(eq(otpSettings), eq(PHONE))).thenReturn(sentOtp);
 
         sentOtpRepository = mock(SentOtpRepository.class);
-        when(sentOtpRepository.findById(eq(SESSION_ID))).thenReturn(Optional.of(sentOtp));
+        when(sentOtpRepository.findById(eq(UUID.fromString(SESSION_ID)))).thenReturn(Optional.of(sentOtp));
 
         ApplicationContext applicationContext = mock(ApplicationContext.class);
         when(applicationContext.getBean(eq(TYPE), eq(OtpSender.class))).thenReturn(otpSender);
