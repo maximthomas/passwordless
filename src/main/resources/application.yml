@@ -30,6 +30,8 @@ spring:
     change-log: classpath:db/changelog/db.changelog-master.xml
 
 otp:
+  attempts: 5
+  resendAllowedAfterMinutes: 1
   settings:
     #dummy OTP sender
     - id: "sms"

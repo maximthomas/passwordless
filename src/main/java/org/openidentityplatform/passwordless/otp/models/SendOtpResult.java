@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SendOTPResult {
-    private String operationId;
+public class SendOtpResult {
+    private String sessionId;
+    private String destination;
+    private Long resendAllowedAt;
+    private Integer remainingAttempts;
 }

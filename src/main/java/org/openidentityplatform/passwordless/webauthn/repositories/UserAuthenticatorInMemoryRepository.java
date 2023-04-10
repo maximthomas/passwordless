@@ -17,14 +17,8 @@
 package org.openidentityplatform.passwordless.webauthn.repositories;
 
 import com.webauthn4j.authenticator.Authenticator;
-import com.webauthn4j.converter.util.CborConverter;
-import com.webauthn4j.converter.util.ObjectConverter;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class UserAuthenticatorInMemoryRepository implements UserAuthenticatorRepository{
 
@@ -33,9 +27,7 @@ public class UserAuthenticatorInMemoryRepository implements UserAuthenticatorRep
 
     @Override
     public void save(String username, Authenticator authenticator) {
-        if(!userAuthenticatorsMap.containsKey(username)) {
-            userAuthenticatorsMap.put(username, new HashSet<>());
-        }
+        userAuthenticatorsMap.putIfAbsent(username, new HashSet<>());
         userAuthenticatorsMap.get(username).add(authenticator);
     }
 

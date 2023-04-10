@@ -16,14 +16,15 @@
 
 package org.openidentityplatform.passwordless.otp.models;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import java.util.UUID;
 
 @Data
@@ -35,11 +36,17 @@ import java.util.UUID;
 public class SentOtp {
 
     @Id
-    private UUID operationId;
+    @Column(name = "session_id")
+    private UUID sessionId;
 
     private String otp;
 
     private long expireTime;
 
     private String destination;
+
+    private long lastSentAt;
+
+    private Integer attempts;
+
 }

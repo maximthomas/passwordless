@@ -5,18 +5,22 @@
                                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
     <changeSet id="1" author="maximthomas">
         <createTable  tableName="sent_otp">
-            <column  name="operation_id"  type="uuid">
-                <constraints  primaryKey="true"  nullable="false"/>
+            <column name="session_id"  type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column  name="otp"  type="varchar(10)">
+            <column name="otp" type="varchar(10)">
                 <constraints  nullable="false"/>
             </column>
-            <column  name="expire_time"  type="bigint">
+            <column name="expire_time" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="destination" type="varchar(255)">
                 <constraints  nullable="false"/>
             </column>
-            <column  name="destination"  type="varchar(255)">
+            <column name="last_sent_at" type="bigint">
                 <constraints  nullable="false"/>
             </column>
+            <column name="attempts" type="int" />
         </createTable>
         <createTable tableName="webauthn_authenticators">
             <column name="username" type="varchar">

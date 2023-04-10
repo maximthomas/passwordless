@@ -149,6 +149,12 @@
             <groupId>com.webauthn4j</groupId>
             <artifactId>webauthn4j-test</artifactId>
             <version>${webauthn4j.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

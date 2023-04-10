@@ -17,13 +17,9 @@
 package org.openidentityplatform.passwordless.otp.services;
 
 import lombok.extern.log4j.Log4j2;
-import org.openidentityplatform.passwordless.otp.configuration.OTPSetting;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.stereotype.Service;
-
-import java.util.Map;
 
 @Log4j2
 public class EmailOtpSender implements OtpSender {
@@ -35,12 +31,11 @@ public class EmailOtpSender implements OtpSender {
     }
 
     @Override
-    public void sendOTP(OTPSetting otpSetting, String otp, String destination, Map<String, String> properties) {
-        String messageStr = this.createMessage(otpSetting, otp, destination, properties);
+    public void sendOTP(String destination, String messageBody, String messageTitle) {
         SimpleMailMessage msg = new SimpleMailMessage();
         msg.setTo(destination);
-        msg.setText(messageStr);
-        msg.setSubject(otpSetting.getMessageTitle());
+        msg.setText(messageBody);
+        msg.setSubject(messageTitle);
         try{
             this.mailSender.send(msg);
         }

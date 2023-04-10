@@ -11,11 +11,13 @@ import java.util.List;
 @ConfigurationProperties(prefix = "otp")
 @Getter
 @Setter
-public class OTPSettingsList {
+public class OtpConfiguration {
 
-    private List<OTPSetting> settings;
+    private Integer attempts;
 
-    public OTPSetting getSetting(String settingId) {
+    private Integer resendAllowedAfterMinutes;
+    private List<OtpSettings> settings;
+    public OtpSettings getSetting(String settingId) {
         return settings.stream()
                 .filter(s -> s.getId().equals(settingId))
                 .findFirst()

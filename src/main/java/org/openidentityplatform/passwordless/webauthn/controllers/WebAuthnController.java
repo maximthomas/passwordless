@@ -42,6 +42,7 @@ import java.util.Base64;
         )
 public class WebAuthnController {
 
+    public static final String USERNAME_SESSION_ATTRIBUTE = "username";
     private final WebAuthnRegistrationService webAuthnRegistrationService;
 
     private final WebAuthnLoginService webAuthnLoginService;
@@ -63,7 +64,7 @@ public class WebAuthnController {
         PublicKeyCredentialCreationOptions credentialCreationOptions
                 = webAuthnRegistrationService.requestCredentials(username, request);
 
-        request.getSession().setAttribute("username", username);  //authencticated user
+        request.getSession().setAttribute(USERNAME_SESSION_ATTRIBUTE, username);  //authencticated user
 
         return credentialCreationOptions;
     }
@@ -72,7 +73,7 @@ public class WebAuthnController {
     public Map<String, Object> registerCredential(@RequestBody CredentialRequest credentialRequest, HttpServletRequest request) {
         log.info("credential request:  {}", credentialRequest);
 
-        String username = (String)request.getSession().getAttribute("username");
+        String username = (String)request.getSession().getAttribute(USERNAME_SESSION_ATTRIBUTE);
 
         Authenticator authenticator = webAuthnRegistrationService.processCredentials(credentialRequest, request);
 
@@ -89,7 +90,7 @@ public class WebAuthnController {
         PublicKeyCredentialRequestOptions credentialRequestOptions
                 = webAuthnLoginService.requestCredentials(username, request, authenticators);
 
-        request.getSession().setAttribute("username", username);  //authencticated user
+        request.getSession().setAttribute(USERNAME_SESSION_ATTRIBUTE, username);  //authencticated user
 
         return  credentialRequestOptions;
     }
@@ -99,7 +100,7 @@ public class WebAuthnController {
 
         log.info("assert request: {}", assertRequest);
 
-        String username = (String)request.getSession().getAttribute("username");
+        String username = (String)request.getSession().getAttribute(USERNAME_SESSION_ATTRIBUTE);
 
         Set<Authenticator> authenticators = userAuthenticatorRepository.load(username);
 

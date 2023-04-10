@@ -27,7 +27,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.MailSender;
 
 @Configuration
-public class OTPConfiguration {
+public class OtpBeansConfiguration {
     @Bean
     public OtpSender dummyOTPSender() {
         return new DummyOtpSender();

@@ -40,8 +40,8 @@ import java.util.Base64;
 @Service
 public class WebAuthnRegistrationService {
 
-    List<PublicKeyCredentialParameters> pubKeyCredParams;
-    WebAuthnManager webAuthnManager;
+    final List<PublicKeyCredentialParameters> pubKeyCredParams;
+    final WebAuthnManager webAuthnManager;
 
     private final WebAuthnConfiguration webAuthnConfiguration;
     public WebAuthnRegistrationService(WebAuthnConfiguration webAuthnConfiguration) {

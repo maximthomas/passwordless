@@ -17,19 +17,14 @@
 package org.openidentityplatform.passwordless.otp.services;
 
 import lombok.extern.log4j.Log4j2;
-import org.openidentityplatform.passwordless.otp.configuration.OTPSetting;
 import org.springframework.stereotype.Service;
-
-import java.util.Map;
 
 @Service
 @Log4j2
 public class DummyOtpSender implements OtpSender {
 
     @Override
-    public void sendOTP(OTPSetting otpSetting, String otp, String destination, Map<String, String> properties) {
-        String message = createMessage(otpSetting, otp, destination, properties);
-        log.info("message: {}", message);
-
+    public void sendOTP(String destination, String messageBody, String messageTitle) {
+        log.info("message: {}", messageBody);
     }
 }

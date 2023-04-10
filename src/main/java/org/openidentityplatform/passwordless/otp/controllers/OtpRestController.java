@@ -16,14 +16,18 @@
 
 package org.openidentityplatform.passwordless.otp.controllers;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.openidentityplatform.passwordless.otp.models.SendOTPRequest;
-import org.openidentityplatform.passwordless.otp.models.SendOTPResult;
-import org.openidentityplatform.passwordless.otp.models.VerifyOTPRequest;
-import org.openidentityplatform.passwordless.otp.models.VerifyOTPResult;
-import org.openidentityplatform.passwordless.otp.services.OperationNotFoundException;
+import org.openidentityplatform.passwordless.otp.models.SendOtpRequest;
+import org.openidentityplatform.passwordless.otp.models.SendOtpResult;
+import org.openidentityplatform.passwordless.otp.models.VerifyOtpRequest;
+import org.openidentityplatform.passwordless.otp.models.VerifyOtpResult;
+import org.openidentityplatform.passwordless.otp.services.BadRequestException;
+import org.openidentityplatform.passwordless.otp.services.FrequentSendingForbidden;
+import org.openidentityplatform.passwordless.otp.services.NotFoundException;
+import org.openidentityplatform.passwordless.otp.services.OtpVerifyAttemptsExceeded;
+import org.openidentityplatform.passwordless.otp.services.SendOtpException;
 import org.openidentityplatform.passwordless.otp.services.OtpService;
-import org.openidentityplatform.passwordless.otp.services.SenderNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,25 +42,32 @@ public class OtpRestController {
 
     private final OtpService otpService;
 
-    @PostMapping("/{settingId}/send")
-    public SendOTPResult send(@PathVariable("settingId") String settingId, @RequestBody SendOTPRequest sendOTPRequest) throws SenderNotFoundException {
-        return otpService.send(settingId, sendOTPRequest.getDestination(), sendOTPRequest.getProperties());
+    @PostMapping("/send")
+    public SendOtpResult send(@RequestBody @Valid SendOtpRequest sendOTPRequest)
+            throws NotFoundException, SendOtpException, FrequentSendingForbidden {
+        return otpService.send(sendOTPRequest.getSender(), sendOTPRequest.getDestination());
     }
 
     @PostMapping("/verify")
-    public VerifyOTPResult verify(@RequestBody VerifyOTPRequest verifyOTPRequest) throws OperationNotFoundException {
-        return otpService.verify(verifyOTPRequest.getOperationId(), verifyOTPRequest.getOtp());
-    }
-
-    @ExceptionHandler(OperationNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleOperationNotFoundException() {
-        return new ResponseEntity<>(Collections.singletonMap("error", "operation not found"), HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(SenderNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleSenderNotFoundException() {
-        return new ResponseEntity<>(Collections.singletonMap("error", "sender not found"), HttpStatus.NOT_FOUND);
+    public VerifyOtpResult verify(@RequestBody @Valid VerifyOtpRequest verifyOTPRequest) throws NotFoundException, OtpVerifyAttemptsExceeded {
+        return otpService.verify(verifyOTPRequest.sessionId, verifyOTPRequest.otp);
     }
 
 
+    private final static String ERROR_PROPERTY = "error";
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleNotFoundException(NotFoundException e) {
+        return new ResponseEntity<>(Collections.singletonMap(ERROR_PROPERTY, e.getMessage()), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(SendOtpException.class)
+    public ResponseEntity<Map<String, String>> handleSendOtpException(SendOtpException e) {
+        return new ResponseEntity<>(Collections.singletonMap(ERROR_PROPERTY, e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<Map<String, String>> handleSendOtpException(BadRequestException e) {
+        return new ResponseEntity<>(Collections.singletonMap(ERROR_PROPERTY, e.getMessage()), HttpStatus.BAD_REQUEST);
+    }
 }
