@@ -18,22 +18,19 @@ package org.openidentityplatform.passwordless.otp.controllers;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.openidentityplatform.passwordless.exceptions.NotFoundException;
 import org.openidentityplatform.passwordless.otp.models.SendOtpRequest;
 import org.openidentityplatform.passwordless.otp.models.SendOtpResult;
 import org.openidentityplatform.passwordless.otp.models.VerifyOtpRequest;
 import org.openidentityplatform.passwordless.otp.models.VerifyOtpResult;
-import org.openidentityplatform.passwordless.otp.services.BadRequestException;
 import org.openidentityplatform.passwordless.otp.services.FrequentSendingForbidden;
-import org.openidentityplatform.passwordless.otp.services.NotFoundException;
+import org.openidentityplatform.passwordless.otp.services.OtpService;
 import org.openidentityplatform.passwordless.otp.services.OtpVerifyAttemptsExceeded;
 import org.openidentityplatform.passwordless.otp.services.SendOtpException;
-import org.openidentityplatform.passwordless.otp.services.OtpService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Collections;
-import java.util.Map;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @AllArgsConstructor
@@ -54,20 +51,7 @@ public class OtpRestController {
     }
 
 
-    private final static String ERROR_PROPERTY = "error";
 
-    @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleNotFoundException(NotFoundException e) {
-        return new ResponseEntity<>(Collections.singletonMap(ERROR_PROPERTY, e.getMessage()), HttpStatus.NOT_FOUND);
-    }
 
-    @ExceptionHandler(SendOtpException.class)
-    public ResponseEntity<Map<String, String>> handleSendOtpException(SendOtpException e) {
-        return new ResponseEntity<>(Collections.singletonMap(ERROR_PROPERTY, e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
-    }
 
-    @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<Map<String, String>> handleSendOtpException(BadRequestException e) {
-        return new ResponseEntity<>(Collections.singletonMap(ERROR_PROPERTY, e.getMessage()), HttpStatus.BAD_REQUEST);
-    }
 }

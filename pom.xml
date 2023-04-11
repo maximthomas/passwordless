@@ -36,6 +36,8 @@
         <commons-text.version>1.10.0</commons-text.version>
         <twilio.version>9.1.2</twilio.version>
         <webauthn4j.version>0.21.0.RELEASE</webauthn4j.version>
+        <java-totp.version>0.4.0</java-totp.version>
+        <zxing.version>3.5.1</zxing.version>
         <springdoc.version>1.6.9</springdoc.version>
         <nodejs.version>v16.16.0</nodejs.version>
         <yarn.version>v1.22.19</yarn.version>
@@ -78,7 +80,24 @@
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
 
-        <!--webauthn-->
+        <!--TOTP-->
+        <dependency>
+            <groupId>com.eatthepath</groupId>
+            <artifactId>java-otp</artifactId>
+            <version>${java-totp.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <version>${zxing.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>javase</artifactId>
+            <version>${zxing.version}</version>
+        </dependency>
+
+        <!--WebAuthn-->
         <dependency>
             <groupId>com.webauthn4j</groupId>
             <artifactId>webauthn4j-core</artifactId>
