@@ -1,4 +1,4 @@
-package org.openidentityplatform.passwordless.otp.services;
+package org.openidentityplatform.passwordless.exceptions;
 
 public class NotFoundException extends Exception {
     public NotFoundException(String message) {

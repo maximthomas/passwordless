@@ -3,6 +3,7 @@ package org.openidentityplatform.passwordless.otp.services;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.text.StringSubstitutor;
+import org.openidentityplatform.passwordless.exceptions.NotFoundException;
 import org.openidentityplatform.passwordless.otp.configuration.OtpSettings;
 import org.openidentityplatform.passwordless.otp.configuration.OtpConfiguration;
 import org.openidentityplatform.passwordless.otp.models.SendOtpResult;

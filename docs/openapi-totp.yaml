@@ -1,0 +1,86 @@
+openapi: 3.0.3
+info:
+    title: One Time Password Authentication Service
+    description: |-
+        This is an Time One Time Password (TOTP) registering and validating service
+    license:
+        name: Apache 2.0
+        url: http://www.apache.org/licenses/LICENSE-2.0.html
+    version: 0.0.1
+servers:
+    - url: https://localhost:8080/totp/v1
+paths:
+    /register:
+        post:
+            summary: Register new user TOTP account
+            description: Create shared secret and returns URI and QR code for the specified login
+            operationId: register
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/RegisterRequest'
+                required: true
+            responses:
+                '200':
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/RegisterResponse'
+                '400':
+                    description: Invalid send registration request data
+    /verify:
+        post:
+            summary: Verify received TOTP
+            description: Verify received TOTP
+            operationId: verify
+            requestBody:
+                description: Verify TOTP request
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/VerifyRequest'
+                required: true
+            responses:
+                '200':
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/VerifyResponse'
+                '400':
+                    description: Invalid send OTP request data
+                '404':
+                    description: User not found
+
+components:
+    schemas:
+        RegisterRequest:
+            type: object
+            properties:
+                username:
+                    type: string
+        RegisterResponse:
+            type: object
+            properties:
+                uri:
+                    type: string
+                    description: URI for an authenticator app
+                qr:
+                    type: string
+                    description: URI for an authenticator app QR code image in base64
+
+        VerifyRequest:
+            type: object
+            properties:
+                username:
+                    type: string
+                totp:
+                    type: string
+
+        VerifyResponse:
+            type: object
+            properties:
+                valid:
+                    type: boolean

@@ -4,23 +4,31 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
     <changeSet id="1" author="maximthomas">
-        <createTable  tableName="sent_otp">
+        <createTable  tableName="sent_otp"> <!--TODO rename to sent_otp_codes-->
             <column name="session_id"  type="uuid">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="otp" type="varchar(10)">
-                <constraints  nullable="false"/>
+                <constraints nullable="false"/>
             </column>
             <column name="expire_time" type="bigint">
                 <constraints nullable="false"/>
             </column>
             <column name="destination" type="varchar(255)">
-                <constraints  nullable="false"/>
+                <constraints nullable="false"/>
             </column>
             <column name="last_sent_at" type="bigint">
-                <constraints  nullable="false"/>
+                <constraints nullable="false"/>
             </column>
             <column name="attempts" type="int" />
+        </createTable>
+        <createTable tableName="registered_totps">
+            <column name="username" type="varchar(255)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="secret" type="varchar">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
         <createTable tableName="webauthn_authenticators">
             <column name="username" type="varchar">

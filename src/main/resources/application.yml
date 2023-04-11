@@ -71,3 +71,8 @@ webauthn:
     timeout: 60000
     rpId: localhost
     origin: 'http://localhost:8080'
+
+totp:
+  issuer: "acme.com"
+  issuerLabel: "Acme LLC"
+
