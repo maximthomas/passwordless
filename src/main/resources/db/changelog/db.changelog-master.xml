@@ -4,7 +4,7 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
     <changeSet id="1" author="maximthomas">
-        <createTable  tableName="sent_otp"> <!--TODO rename to sent_otp_codes-->
+        <createTable  tableName="sent_otp">
             <column name="session_id"  type="uuid">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -22,7 +22,7 @@
             </column>
             <column name="attempts" type="int" />
         </createTable>
-        <createTable tableName="registered_totps">
+        <createTable tableName="registered_totp">
             <column name="username" type="varchar(255)">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
