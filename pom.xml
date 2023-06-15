@@ -41,7 +41,7 @@
         <springdoc.version>1.6.15</springdoc.version>
         <nodejs.version>v16.16.0</nodejs.version>
         <yarn.version>v1.22.19</yarn.version>
-        <guava.version>31.1-jre</guava.version>
+        <guava.version>32.0.0-jre</guava.version>
         <hibernate-validator.version>8.0.0.Final</hibernate-validator.version>
     </properties>
 
