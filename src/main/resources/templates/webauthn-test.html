@@ -102,10 +102,12 @@
         function processLoginChallenge(challenge) {
 
             challenge.challenge = bufferDecode(challenge.challenge.value);
-            challenge.allowCredentials.forEach(allowCredential => {
-                    allowCredential.id = bufferDecode(allowCredential.id);
-                }
-            );
+            if(challenge.allowCredentials) {
+                challenge.allowCredentials.forEach(allowCredential => {
+                        allowCredential.id = bufferDecode(allowCredential.id);
+                    }
+                );
+            }
             console.log('login challenge', challenge);
 
             navigator.credentials.get({
@@ -127,7 +129,6 @@
             const signature = new Uint8Array(assertion.response.signature);
             const userHandle = new Uint8Array(assertion.response.userHandle);
             const rawId = new Uint8Array(assertion.rawId);
-
 
             const postData = {
                 id: assertion.id,

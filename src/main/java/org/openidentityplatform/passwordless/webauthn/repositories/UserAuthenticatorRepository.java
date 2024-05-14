@@ -16,13 +16,13 @@
 
 package org.openidentityplatform.passwordless.webauthn.repositories;
 
-import com.webauthn4j.authenticator.Authenticator;
+import com.webauthn4j.credential.CredentialRecord;
 
 import java.util.Set;
 
 public interface UserAuthenticatorRepository {
 
-    void save(String username, Authenticator authenticator);
+    void save(String username, CredentialRecord authenticator);
 
-    Set<Authenticator> load(String username);
+    Set<CredentialRecord> load(String username);
 }

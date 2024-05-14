@@ -16,23 +16,29 @@
 
 package org.openidentityplatform.passwordless.webauthn.controllers;
 
-import com.webauthn4j.authenticator.Authenticator;
+import com.webauthn4j.credential.CredentialRecord;
 import com.webauthn4j.data.PublicKeyCredentialCreationOptions;
 import com.webauthn4j.data.PublicKeyCredentialRequestOptions;
 import com.webauthn4j.data.attestation.authenticator.AuthenticatorData;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.openidentityplatform.passwordless.webauthn.models.AssertRequest;
 import org.openidentityplatform.passwordless.webauthn.models.CredentialRequest;
 import org.openidentityplatform.passwordless.webauthn.repositories.UserAuthenticatorRepository;
 import org.openidentityplatform.passwordless.webauthn.services.WebAuthnLoginService;
 import org.openidentityplatform.passwordless.webauthn.services.WebAuthnRegistrationService;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.servlet.http.HttpServletRequest;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
-import java.util.Base64;
 
 @Slf4j
 @RestController
@@ -75,22 +81,33 @@ public class WebAuthnController {
 
         String username = (String)request.getSession().getAttribute(USERNAME_SESSION_ATTRIBUTE);
 
-        Authenticator authenticator = webAuthnRegistrationService.processCredentials(credentialRequest, request);
+        CredentialRecord credentialRecord = webAuthnRegistrationService.processCredentials(credentialRequest, request);
 
-        userAuthenticatorRepository.save(username, authenticator);
+        userAuthenticatorRepository.save(username, credentialRecord);
 
-        return Collections.singletonMap("credentialId", Base64.getUrlEncoder().encodeToString(authenticator.getAttestedCredentialData().getCredentialId()));
+        return Collections.singletonMap("credentialId", Base64.getUrlEncoder().encodeToString(credentialRecord.getAttestedCredentialData().getCredentialId()));
     }
 
     @RequestMapping("/login/challenge/{username}")
     public PublicKeyCredentialRequestOptions credentialRequest(HttpServletRequest request,
                                                                @PathVariable("username") String username) {
 
-        Set<Authenticator> authenticators = userAuthenticatorRepository.load(username);
+        Set<CredentialRecord> authenticators = userAuthenticatorRepository.load(username);
         PublicKeyCredentialRequestOptions credentialRequestOptions
                 = webAuthnLoginService.requestCredentials(username, request, authenticators);
 
         request.getSession().setAttribute(USERNAME_SESSION_ATTRIBUTE, username);  //authencticated user
+
+        return  credentialRequestOptions;
+    }
+
+    @RequestMapping("/login/challenge/")
+    public PublicKeyCredentialRequestOptions credentialAnonRequest(HttpServletRequest request) {
+
+        PublicKeyCredentialRequestOptions credentialRequestOptions
+                = webAuthnLoginService.requestCredentials("", request, Collections.emptySet());
+
+        request.getSession().setAttribute(USERNAME_SESSION_ATTRIBUTE, "");  //authencticated user
 
         return  credentialRequestOptions;
     }
@@ -102,7 +119,7 @@ public class WebAuthnController {
 
         String username = (String)request.getSession().getAttribute(USERNAME_SESSION_ATTRIBUTE);
 
-        Set<Authenticator> authenticators = userAuthenticatorRepository.load(username);
+        Set<CredentialRecord> authenticators = userAuthenticatorRepository.load(username);
 
         AuthenticatorData<?> authenticatorData = webAuthnLoginService.processCredentials(request, assertRequest, authenticators);
 

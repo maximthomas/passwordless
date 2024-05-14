@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.0.5</version>
+        <version>3.2.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>org.openidentityplatform</groupId>
@@ -34,8 +34,8 @@
     <properties>
         <java.version>17</java.version>
         <commons-text.version>1.10.0</commons-text.version>
-        <twilio.version>9.2.5</twilio.version>
-        <webauthn4j.version>0.21.0.RELEASE</webauthn4j.version>
+        <twilio.version>10.1.5</twilio.version>
+        <webauthn4j.version>0.24.0.RELEASE</webauthn4j.version>
         <java-totp.version>0.4.0</java-totp.version>
         <zxing.version>3.5.1</zxing.version>
         <springdoc.version>1.6.15</springdoc.version>

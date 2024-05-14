@@ -16,23 +16,27 @@
 
 package org.openidentityplatform.passwordless.webauthn.repositories;
 
-import com.webauthn4j.authenticator.Authenticator;
+import com.webauthn4j.credential.CredentialRecord;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class UserAuthenticatorInMemoryRepository implements UserAuthenticatorRepository{
 
-    private final Map<String, Set<Authenticator>> userAuthenticatorsMap = new HashMap<>();
+    private final Map<String, Set<CredentialRecord>> userAuthenticatorsMap = new HashMap<>();
 
 
     @Override
-    public void save(String username, Authenticator authenticator) {
+    public void save(String username, CredentialRecord credentialRecord) {
         userAuthenticatorsMap.putIfAbsent(username, new HashSet<>());
-        userAuthenticatorsMap.get(username).add(authenticator);
+        userAuthenticatorsMap.get(username).add(credentialRecord);
     }
 
     @Override
-    public Set<Authenticator> load(String username) {
+    public Set<CredentialRecord> load(String username) {
         if(!userAuthenticatorsMap.containsKey(username)) {
             return Collections.emptySet();
         }

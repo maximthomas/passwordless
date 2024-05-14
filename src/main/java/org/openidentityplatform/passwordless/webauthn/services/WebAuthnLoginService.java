@@ -17,20 +17,26 @@
 package org.openidentityplatform.passwordless.webauthn.services;
 
 import com.webauthn4j.WebAuthnManager;
-import com.webauthn4j.authenticator.Authenticator;
 import com.webauthn4j.converter.exception.DataConversionException;
-import com.webauthn4j.data.*;
+import com.webauthn4j.credential.CredentialRecord;
+import com.webauthn4j.data.AuthenticationData;
+import com.webauthn4j.data.AuthenticationParameters;
+import com.webauthn4j.data.AuthenticationRequest;
+import com.webauthn4j.data.PublicKeyCredentialDescriptor;
+import com.webauthn4j.data.PublicKeyCredentialRequestOptions;
+import com.webauthn4j.data.PublicKeyCredentialType;
+import com.webauthn4j.data.UserVerificationRequirement;
 import com.webauthn4j.data.attestation.authenticator.AuthenticatorData;
 import com.webauthn4j.data.client.Origin;
 import com.webauthn4j.data.client.challenge.Challenge;
 import com.webauthn4j.data.client.challenge.DefaultChallenge;
 import com.webauthn4j.server.ServerProperty;
 import com.webauthn4j.validator.exception.ValidationException;
+import jakarta.servlet.http.HttpServletRequest;
 import org.openidentityplatform.passwordless.webauthn.configuration.WebAuthnConfiguration;
 import org.openidentityplatform.passwordless.webauthn.models.AssertRequest;
 import org.springframework.stereotype.Service;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -52,13 +58,13 @@ public class WebAuthnLoginService {
     }
 
     public PublicKeyCredentialRequestOptions requestCredentials(String username, HttpServletRequest request,
-                                                                Set<Authenticator> authenticators) {
+                                                                Set<CredentialRecord> authenticators) {
 
         Challenge challenge = new DefaultChallenge(request.getSession().getId().getBytes());
 
         List<PublicKeyCredentialDescriptor> allowCredentials = new ArrayList<>();
 
-        for(Authenticator authenticator : authenticators) {
+        for(CredentialRecord authenticator : authenticators) {
             PublicKeyCredentialDescriptor publicKeyCredentialDescriptor = new PublicKeyCredentialDescriptor(
                     PublicKeyCredentialType.PUBLIC_KEY,
                     authenticator.getAttestedCredentialData().getCredentialId(),
@@ -70,13 +76,13 @@ public class WebAuthnLoginService {
         PublicKeyCredentialRequestOptions publicKeyCredentialRequestOptions = new PublicKeyCredentialRequestOptions(
                 challenge, webAuthnConfiguration.getTimeout(),
                 webAuthnConfiguration.getRpId(),
-                allowCredentials, userVerificationRequirement, null
+                null, userVerificationRequirement, null
         );
 
         return publicKeyCredentialRequestOptions;
     }
 
-    public AuthenticatorData<?> processCredentials(HttpServletRequest request, AssertRequest assertRequest, Set<Authenticator> authenticators) {
+    public AuthenticatorData<?> processCredentials(HttpServletRequest request, AssertRequest assertRequest, Set<CredentialRecord> credentialRecords) {
 
         byte[] id = Base64.getUrlDecoder().decode(assertRequest.getId());
 
@@ -99,14 +105,14 @@ public class WebAuthnLoginService {
                 id, userHandle, authenticatorData, clientDataJSON, null, signature
         );
 
-        Authenticator authenticator = authenticators.stream().filter(a ->
-                Objects.deepEquals(a.getAttestedCredentialData().getCredentialId(), id))
+        CredentialRecord credentialRecord = credentialRecords.stream().filter(cr ->
+                Objects.deepEquals(cr.getAttestedCredentialData().getCredentialId(), id))
                 .findFirst().orElse(null);
 
         AuthenticationParameters authenticationParameters =
                 new AuthenticationParameters(
                         serverProperty,
-                        authenticator,
+                        credentialRecord,
                         allowCredentials,
                         userVerificationRequired,
                         userPresenceRequired

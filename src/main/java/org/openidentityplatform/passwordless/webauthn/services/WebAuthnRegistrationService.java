@@ -17,25 +17,35 @@
 package org.openidentityplatform.passwordless.webauthn.services;
 
 import com.webauthn4j.WebAuthnManager;
-import com.webauthn4j.authenticator.Authenticator;
-import com.webauthn4j.authenticator.AuthenticatorImpl;
 import com.webauthn4j.converter.exception.DataConversionException;
-import com.webauthn4j.data.*;
+import com.webauthn4j.credential.CredentialRecord;
+import com.webauthn4j.credential.CredentialRecordImpl;
+import com.webauthn4j.data.AuthenticatorSelectionCriteria;
+import com.webauthn4j.data.PublicKeyCredentialCreationOptions;
+import com.webauthn4j.data.PublicKeyCredentialDescriptor;
+import com.webauthn4j.data.PublicKeyCredentialParameters;
+import com.webauthn4j.data.PublicKeyCredentialRpEntity;
+import com.webauthn4j.data.PublicKeyCredentialType;
+import com.webauthn4j.data.PublicKeyCredentialUserEntity;
+import com.webauthn4j.data.RegistrationData;
+import com.webauthn4j.data.RegistrationParameters;
+import com.webauthn4j.data.RegistrationRequest;
+import com.webauthn4j.data.UserVerificationRequirement;
 import com.webauthn4j.data.attestation.statement.COSEAlgorithmIdentifier;
 import com.webauthn4j.data.client.Origin;
 import com.webauthn4j.data.client.challenge.Challenge;
 import com.webauthn4j.data.client.challenge.DefaultChallenge;
 import com.webauthn4j.server.ServerProperty;
 import com.webauthn4j.validator.exception.ValidationException;
+import jakarta.servlet.http.HttpServletRequest;
 import org.openidentityplatform.passwordless.webauthn.configuration.WebAuthnConfiguration;
 import org.openidentityplatform.passwordless.webauthn.models.CredentialRequest;
 import org.springframework.stereotype.Service;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
-import java.util.Base64;
 
 @Service
 public class WebAuthnRegistrationService {
@@ -84,7 +94,7 @@ public class WebAuthnRegistrationService {
         AuthenticatorSelectionCriteria authenticatorSelectionCriteria =
                 new AuthenticatorSelectionCriteria(
                         webAuthnConfiguration.getAuthenticatorAttachment(),
-                        false,
+                        true,
                         userVerificationRequirement);
 
         PublicKeyCredentialCreationOptions credentialCreationOptions = new PublicKeyCredentialCreationOptions(
@@ -102,7 +112,7 @@ public class WebAuthnRegistrationService {
         return credentialCreationOptions;
     }
 
-    public Authenticator processCredentials(CredentialRequest credentialRequest, HttpServletRequest request)  {
+    public CredentialRecord processCredentials(CredentialRequest credentialRequest, HttpServletRequest request)  {
 
         Challenge challenge = new DefaultChallenge(request.getSession().getId().getBytes());
         Origin origin = new Origin(webAuthnConfiguration.getOriginUrl());
@@ -122,7 +132,8 @@ public class WebAuthnRegistrationService {
         boolean userPresenceRequired = true;
 
         RegistrationRequest registrationRequest = new RegistrationRequest(attestationObject, clientDataJSON);
-        RegistrationParameters registrationParameters = new RegistrationParameters(serverProperty, this.pubKeyCredParams, userVerificationRequired, userPresenceRequired);
+        RegistrationParameters registrationParameters =
+                new RegistrationParameters(serverProperty, this.pubKeyCredParams, userVerificationRequired, userPresenceRequired);
 
 
        RegistrationData registrationData;
@@ -140,12 +151,13 @@ public class WebAuthnRegistrationService {
         }
 
         // please persist Authenticator object, which will be used in the authentication process.
-        Authenticator authenticator =
-                new AuthenticatorImpl( // You may create your own Authenticator implementation to save friendly authenticator name
-                        registrationData.getAttestationObject().getAuthenticatorData().getAttestedCredentialData(),
-                        registrationData.getAttestationObject().getAttestationStatement(),
-                        registrationData.getAttestationObject().getAuthenticatorData().getSignCount()
+        CredentialRecord credentialRecord =
+                new CredentialRecordImpl( // You may create your own Authenticator implementation to save friendly authenticator name
+                        registrationData.getAttestationObject(),
+                        registrationData.getCollectedClientData(),
+                        registrationData.getClientExtensions(),
+                        registrationData.getTransports()
                 );
-        return authenticator;
+        return credentialRecord;
     }
 }
